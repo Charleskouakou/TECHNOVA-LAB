@@ -1,0 +1,5144 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TECHNOVA LAB — Plateforme Éducative Complète</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #00d4ff;
+  --primary-dark: #0099cc;
+  --primary-glow: rgba(0, 212, 255, 0.4);
+  --accent: #ff6b35;
+  --accent-light: #ff8c42;
+  --accent-glow: rgba(255, 107, 53, 0.4);
+  --success: #00e676;
+  --success-glow: rgba(0, 230, 118, 0.4);
+  --danger: #ff1744;
+  --warning: #ffd600;
+  --purple: #7c4dff;
+  --purple-glow: rgba(124, 77, 255, 0.4);
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fb;
+  --bg-tertiary: #eef2f8;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-dark: #0a1628;
+  --bg-dark-2: #1e3a5f;
+  
+  --text-primary: #0a1628;
+  --text-secondary: #4a5568;
+  --text-tertiary: #8892a4;
+  --text-inverse: #ffffff;
+  
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  
+  --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.04);
+  --shadow-md: 0 8px 24px rgba(10, 22, 40, 0.08);
+  --shadow-lg: 0 16px 48px rgba(10, 22, 40, 0.12);
+  --shadow-xl: 0 24px 64px rgba(10, 22, 40, 0.16);
+  --shadow-glow: 0 0 40px var(--primary-glow);
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0a1628;
+  --bg-secondary: #0f1d32;
+  --bg-tertiary: #152642;
+  --bg-card: #152642;
+  --bg-glass: rgba(21, 38, 66, 0.7);
+  
+  --text-primary: #ffffff;
+  --text-secondary: #c4cdd8;
+  --text-tertiary: #8892a4;
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--transition-base), color var(--transition-base);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 107, 53, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(124, 77, 255, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: bgShift 20s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.98); }
+}
+
+#particles-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { 
+  background: linear-gradient(180deg, var(--primary), var(--primary-dark)); 
+  border-radius: 10px;
+  border: 2px solid var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+.app-container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 72px 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+}
+
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 72px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 1.1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.logo span { color: var(--primary); }
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.8rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.search-box input:focus {
+  background: var(--bg-primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.search-box::before {
+  content: '🔍';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  opacity: 0.5;
+}
+
+.search-box kbd {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.icon-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.icon-btn .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--danger);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+  border: 2px solid var(--bg-primary);
+  min-width: 18px;
+  text-align: center;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.lang-btn:hover {
+  border-color: var(--primary);
+  background: var(--bg-primary);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.4rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-menu:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.user-xp {
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.sidebar {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  height: calc(100vh - 72px);
+  position: sticky;
+  top: 72px;
+}
+
+.sidebar-section {
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  padding: 0 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.nav-item.active .nav-icon {
+  filter: brightness(0) invert(1);
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-item .nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.nav-item.active .nav-badge {
+  background: rgba(255,255,255,0.3);
+}
+
+.sidebar-progress {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 77, 255, 0.1));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.sidebar-progress h4 {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.sidebar-progress .progress-bar {
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-progress .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--purple));
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.sidebar-progress .progress-text {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-content {
+  padding: 2rem;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.page {
+  display: none;
+  animation: pageIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page.active { display: block; }
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb .current { color: var(--text-primary); font-weight: 600; }
+
+.hero {
+  background: linear-gradient(135deg, #0a1628 0%, #1e3a5f 50%, #2d4a7a 100%);
+  border-radius: var(--radius-2xl);
+  padding: 3rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 50%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 70% 50%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+  animation: heroGlow 8s ease-in-out infinite;
+}
+
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.hero-badge .pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+  font-weight: 800;
+}
+
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, #00d4ff 0%, #7c4dff 50%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.9rem 1.6rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: white;
+  box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px var(--accent-glow);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before { left: 100%; }
+
+.btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: var(--primary);
+  transform: translateY(-3px);
+}
+
+.btn-cyan {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.btn-cyan:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px var(--primary-glow);
+}
+
+.btn-ghost {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-primary);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+.btn-lg { padding: 1.1rem 2rem; font-size: 1.05rem; }
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.robot-svg {
+  width: 100%;
+  max-width: 420px;
+  filter: drop-shadow(0 20px 40px rgba(0, 212, 255, 0.3));
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+.age-selector {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.age-card {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.age-card:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+
+.age-card.selected {
+  border-color: var(--primary);
+  background: rgba(0, 212, 255, 0.15);
+  box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.age-card .age-emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+.age-card .age-range { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.25rem; }
+.age-card .age-label { font-size: 0.8rem; opacity: 0.8; }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.3rem;
+}
+
+.section-subtitle {
+  color: var(--text-tertiary);
+  font-size: 0.95rem;
+}
+
+.section-link {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  transition: gap var(--transition-fast);
+}
+
+.section-link:hover { gap: 0.6rem; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--purple));
+}
+
+.stat-card.accent::before { background: linear-gradient(90deg, var(--accent), var(--warning)); }
+.stat-card.success::before { background: linear-gradient(90deg, var(--success), var(--primary)); }
+.stat-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--primary)); }
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05));
+}
+
+.stat-card.accent .stat-icon { background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.05)); }
+.stat-card.success .stat-icon { background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(0, 230, 118, 0.05)); }
+.stat-card.purple .stat-icon { background: linear-gradient(135deg, rgba(124, 77, 255, 0.15), rgba(124, 77, 255, 0.05)); }
+
+.stat-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--success);
+}
+
+.stat-trend.down { background: rgba(255, 23, 68, 0.15); color: var(--danger); }
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+}
+
+.card-image {
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.card-image.electronics { background: linear-gradient(135deg, #00d4ff22, #0099cc22); }
+.card-image.programming { background: linear-gradient(135deg, #7c4dff22, #5e35b122); }
+.card-image.robotics { background: linear-gradient(135deg, #ff6b3522, #ff8c4222); }
+.card-image.maintenance { background: linear-gradient(135deg, #00e67622, #00c85322); }
+.card-image.lab { background: linear-gradient(135deg, #ffd60022, #ffab0022); }
+
+.card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 60%);
+}
+
+.card-tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 2;
+}
+
+.card-fav {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 2;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.card-fav:hover { transform: scale(1.15); }
+.card-fav.active { background: var(--danger); color: white; }
+
+.card-body { padding: 1.25rem; }
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.card-progress {
+  margin-top: 1rem;
+}
+
+.mini-progress {
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--success));
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.mini-progress-text {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.course-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.course-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.course-item:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.course-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+}
+
+.course-info { flex: 1; min-width: 0; }
+.course-info h4 { font-size: 0.95rem; margin-bottom: 0.25rem; font-weight: 600; }
+.course-info p { font-size: 0.8rem; color: var(--text-tertiary); }
+
+.course-progress {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.badge-item {
+  aspect-ratio: 1;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.badge-item:hover { transform: scale(1.08); border-color: var(--primary); }
+.badge-item.earned { background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 230, 118, 0.15)); border-color: var(--success); }
+.badge-item.locked { opacity: 0.4; filter: grayscale(1); }
+
+.badge-icon { font-size: 1.8rem; margin-bottom: 0.3rem; }
+.badge-name { font-size: 0.7rem; font-weight: 600; }
+
+.activity-feed { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.activity-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.activity-item:hover { background: var(--bg-secondary); }
+
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.activity-dot::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: calc(100% + 10px);
+  background: var(--border);
+}
+
+.activity-item:last-child .activity-dot::after { display: none; }
+
+.activity-content { flex: 1; }
+.activity-content strong { font-size: 0.88rem; }
+.activity-content p { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 0.2rem; }
+.activity-time { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.3rem; }
+
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--bg-secondary);
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+}
+
+.chart-tab {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.chart-tab.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-svg {
+  width: 100%;
+  height: 220px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  gap: 1.25rem;
+  height: calc(100vh - 220px);
+  min-height: 600px;
+}
+
+.workspace-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.workspace-panel h4 {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.component-category { margin-bottom: 1rem; }
+
+.component-category h5 {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.component-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.4rem;
+  cursor: grab;
+  transition: all var(--transition-fast);
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+}
+
+.component-item:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--primary);
+  transform: translateX(3px);
+}
+
+.comp-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+  flex-shrink: 0;
+}
+
+.canvas-container {
+  background: linear-gradient(135deg, #0f1923, #1a2332);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.3);
+}
+
+.canvas-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-toolbar {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4rem;
+  background: rgba(10, 22, 40, 0.8);
+  backdrop-filter: blur(20px);
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--transition-fast);
+}
+
+.tool-btn:hover { background: rgba(0, 212, 255, 0.3); transform: translateY(-2px); }
+.tool-btn.active { background: var(--primary); color: var(--bg-dark); }
+
+.simulation-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 230, 118, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--success);
+  color: var(--success);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.simulation-status::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  height: calc(100vh - 280px);
+  min-height: 500px;
+}
+
+.editor-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-header {
+  background: var(--bg-dark);
+  color: white;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.editor-header h3 { 
+  font-size: 0.9rem; 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.lang-tabs { display: flex; gap: 0.25rem; }
+
+.lang-tab {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: none;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+.lang-tab.active { background: var(--primary); color: var(--bg-dark); font-weight: 700; }
+
+.code-area {
+  flex: 1;
+  background: #0f1419;
+  color: #e6edf3;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-y: auto;
+  border: none;
+  resize: none;
+  outline: none;
+  tab-size: 2;
+}
+
+.editor-toolbar {
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  display: flex;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.output-panel {
+  background: #0a0e14;
+  color: #00e676;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  flex: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.output-panel .error { color: var(--danger); }
+.output-panel .info { color: var(--primary); }
+.output-panel .warn { color: var(--warning); }
+
+.exercise-info {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 77, 255, 0.1));
+  border-left: 4px solid var(--primary);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+}
+
+.exercise-info h4 { color: var(--text-primary); margin-bottom: 0.4rem; font-size: 1rem; }
+.exercise-info p { font-size: 0.9rem; color: var(--text-secondary); }
+
+.ohm-simulator {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.ohm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.ohm-visual {
+  background: linear-gradient(135deg, #0f1923, #1a2332);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ohm-circuit {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.ohm-controls { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.slider-group label span {
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--primary-glow);
+  transition: transform var(--transition-fast);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+.ohm-result {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.ohm-result .formula {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.ohm-result .value {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.quiz-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quiz-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: var(--text-tertiary);
+}
+
+.quiz-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  margin: 0 1rem;
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--success));
+  border-radius: 10px;
+  transition: width 0.5s;
+}
+
+.quiz-question {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.quiz-options { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+
+.quiz-option {
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+
+.quiz-option:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+  transform: translateX(4px);
+}
+
+.quiz-option.selected {
+  border-color: var(--primary);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.quiz-option.correct {
+  border-color: var(--success);
+  background: rgba(0, 230, 118, 0.1);
+}
+
+.quiz-option.incorrect {
+  border-color: var(--danger);
+  background: rgba(255, 23, 68, 0.1);
+}
+
+.quiz-option-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.quiz-option.selected .quiz-option-letter { background: var(--primary); color: white; }
+.quiz-option.correct .quiz-option-letter { background: var(--success); color: white; }
+.quiz-option.incorrect .quiz-option-letter { background: var(--danger); color: white; }
+
+.quiz-feedback {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: rgba(0, 230, 118, 0.1); border-left: 4px solid var(--success); }
+.quiz-feedback.incorrect { background: rgba(255, 23, 68, 0.1); border-left: 4px solid var(--danger); }
+
+.blocks-editor {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 1rem;
+  height: 500px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.blocks-palette {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+
+.blocks-palette h4 {
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.block-category { margin-bottom: 1rem; }
+
+.block-category-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.block-item {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.4rem;
+  cursor: grab;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+  transition: all var(--transition-fast);
+  border-left: 3px solid rgba(255,255,255,0.3);
+}
+
+.block-item:hover { transform: translateX(3px); box-shadow: var(--shadow-md); }
+.block-item.event { background: #ff6b35; }
+.block-item.control { background: #ffd600; color: #333; }
+.block-item.action { background: #00d4ff; color: #0a1628; }
+.block-item.sensor { background: #00e676; color: #0a1628; }
+.block-item.variable { background: #7c4dff; }
+
+.blocks-canvas {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  overflow-y: auto;
+  position: relative;
+  background-image: 
+    radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.block-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.block-chain .block-item {
+  margin-bottom: 0;
+  border-radius: 0;
+  position: relative;
+}
+
+.block-chain .block-item::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 20px;
+  width: 2px;
+  height: 6px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+.block-chain .block-item:last-child::after { display: none; }
+
+.resistor-calc {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.resistor-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.resistor-svg {
+  width: 100%;
+  max-width: 400px;
+  height: 120px;
+}
+
+.color-bands {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.color-band-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.color-band-select label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+
+.color-band-select select {
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.color-band-select select:focus { border-color: var(--primary); }
+
+.resistor-result {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 77, 255, 0.1));
+  border-radius: var(--radius-md);
+}
+
+.resistor-result .value {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.resistor-result .tolerance {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  margin-top: 0.3rem;
+}
+
+.challenge-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+}
+
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active {
+  background: var(--bg-dark);
+  color: white;
+  border-color: var(--bg-dark);
+}
+
+.challenge-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.challenge-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--purple));
+}
+
+.challenge-card.daily::before { background: linear-gradient(90deg, var(--primary), var(--cyan-dark)); }
+.challenge-card.weekly::before { background: linear-gradient(90deg, var(--purple), #b388ff); }
+.challenge-card.project::before { background: linear-gradient(90deg, var(--accent), var(--warning)); }
+
+.challenge-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+}
+
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.challenge-type {
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.challenge-type.daily { background: rgba(0, 212, 255, 0.15); color: var(--primary-dark); }
+.challenge-type.weekly { background: rgba(124, 77, 255, 0.15); color: var(--purple); }
+.challenge-type.project { background: rgba(255, 107, 53, 0.15); color: var(--accent); }
+
+.challenge-difficulty { display: flex; gap: 0.15rem; }
+.diff-star { color: var(--warning); font-size: 0.9rem; }
+.diff-star.empty { color: var(--border-strong); }
+
+.challenge-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 700; }
+.challenge-card p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem; line-height: 1.5; }
+
+.challenge-rewards {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.reward {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+}
+
+.challenge-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.challenge-time { font-size: 0.82rem; color: var(--text-tertiary); display: flex; align-items: center; gap: 0.3rem; }
+
+.profile-header {
+  background: linear-gradient(135deg, #0a1628 0%, #1e3a5f 50%, #2d4a7a 100%);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem;
+  color: white;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+}
+
+.profile-avatar-lg {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  border: 4px solid white;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.profile-info { flex: 1; position: relative; z-index: 2; }
+.profile-info h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.3rem; }
+.profile-info p { opacity: 0.85; margin-bottom: 1rem; font-size: 0.95rem; }
+
+.profile-stats {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat-item { text-align: center; }
+.stat-item .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); font-family: var(--font-display); }
+.stat-item .stat-label { font-size: 0.82rem; opacity: 0.8; }
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.profile-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.profile-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group { margin-bottom: 1rem; }
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  outline: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toggle-row:last-child { border-bottom: none; }
+
+.toggle-switch {
+  width: 48px;
+  height: 26px;
+  background: var(--bg-tertiary);
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toggle-switch.active { background: var(--primary); }
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active::after { transform: translateX(22px); }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 40, 0.7);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 2rem;
+  animation: fadeIn 0.3s;
+}
+
+.modal-overlay.active { display: flex; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl);
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.9) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-close {
+  float: right;
+  background: var(--bg-secondary);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+}
+
+.modal-close:hover { background: var(--danger); color: white; transform: rotate(90deg); }
+
+.toast-container {
+  position: fixed;
+  top: 90px;
+  right: 2rem;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 380px;
+}
+
+.toast {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-left: 4px solid var(--primary);
+  animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--border);
+}
+
+@keyframes toastIn {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--warning); }
+.toast.info { border-left-color: var(--primary); }
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  background: rgba(0, 212, 255, 0.15);
+}
+
+.toast.success .toast-icon { background: rgba(0, 230, 118, 0.15); }
+.toast.error .toast-icon { background: rgba(255, 23, 68, 0.15); }
+.toast.warning .toast-icon { background: rgba(255, 214, 0, 0.15); }
+
+.toast-content { flex: 1; }
+.toast-content h4 { font-size: 0.92rem; margin-bottom: 0.2rem; font-weight: 700; }
+.toast-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+
+.toast-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 1rem;
+  padding: 0.2rem;
+}
+
+.footer {
+  background: var(--bg-dark);
+  color: white;
+  padding: 3rem 2rem 1.5rem;
+  margin-top: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-col h4 {
+  font-family: var(--font-display);
+  margin-bottom: 1rem;
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.footer-col p { color: rgba(255,255,255,0.7); font-size: 0.88rem; line-height: 1.6; }
+
+.footer-col a {
+  display: block;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  padding: 0.3rem 0;
+  font-size: 0.88rem;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.footer-col a:hover { color: var(--primary); }
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  font-size: 0.82rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 1200px) {
+  .workspace { grid-template-columns: 220px 1fr 260px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+  .app-container { grid-template-columns: 1fr; }
+  .sidebar { 
+    position: fixed;
+    left: -280px;
+    top: 72px;
+    width: 260px;
+    height: calc(100vh - 72px);
+    z-index: 99;
+    transition: left var(--transition-base);
+  }
+  .sidebar.open { left: 0; }
+  .menu-toggle { display: block; }
+  .search-box { max-width: 300px; }
+  .user-name, .user-xp { display: none; }
+  .workspace { grid-template-columns: 1fr; height: auto; }
+  .workspace-panel { max-height: 300px; }
+  .canvas-container { height: 400px; }
+  .editor-layout { grid-template-columns: 1fr; height: auto; }
+  .editor-panel { height: 400px; }
+  .ohm-grid { grid-template-columns: 1fr; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .footer-content { grid-template-columns: 1fr 1fr; }
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; }
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 1rem; }
+  .search-box { display: none; }
+  .main-content { padding: 1rem; }
+  .hero { padding: 2rem 1.5rem; }
+  .hero h1 { font-size: 2rem; }
+  .age-selector { flex-direction: column; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .blocks-editor { grid-template-columns: 1fr; height: auto; }
+  .blocks-palette { max-height: 200px; }
+  .footer-content { grid-template-columns: 1fr; }
+  .profile-header { padding: 1.5rem; }
+  .profile-avatar-lg { width: 90px; height: 90px; font-size: 2rem; }
+  .profile-info h2 { font-size: 1.5rem; }
+}
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.mt-1 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.flex { display: flex; }
+.gap-1 { gap: 1rem; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="app-container">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <a class="logo" onclick="showPage('home')">
+        <div class="logo-icon">T</div>
+        <div>TECHNOVA<span>LAB</span></div>
+      </a>
+      <div class="search-box">
+        <input type="text" placeholder="Rechercher un cours, un défi, un composant..." id="searchInput" onkeyup="handleSearch(event)">
+        <kbd>K</kbd>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleTheme()" title="Changer le thème" id="themeBtn">🌙</button>
+      <button class="icon-btn" onclick="showNotifications()" title="Notifications">
+        🔔
+        <span class="badge">3</span>
+      </button>
+      <button class="icon-btn" onclick="showPage('challenges')" title="Défis"></button>
+      <button class="lang-btn" onclick="cycleLanguage()">
+        <span id="currentLangFlag">🇫🇷</span>
+        <span id="currentLangCode">FR</span>
+      </button>
+      <div class="user-menu" onclick="showPage('profile')">
+        <div class="user-avatar">LD</div>
+        <div>
+          <div class="user-name">Lucas D.</div>
+          <div class="user-xp">⭐ 1 240 XP</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <a class="nav-item active" data-page="home" onclick="showPage('home')">
+        <span class="nav-icon">🏠</span>
+        <span>Accueil</span>
+      </a>
+      <a class="nav-item" data-page="dashboard" onclick="showPage('dashboard')">
+        <span class="nav-icon"></span>
+        <span>Tableau de bord</span>
+        <span class="nav-badge">Nouveau</span>
+      </a>
+      <a class="nav-item" data-page="courses" onclick="showPage('courses')">
+        <span class="nav-icon">📚</span>
+        <span>Mes formations</span>
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-label">Modules</div>
+      <a class="nav-item" data-page="electronics" onclick="showPage('electronics')">
+        <span class="nav-icon">⚡</span>
+        <span>Électronique</span>
+      </a>
+      <a class="nav-item" data-page="lab" onclick="showPage('lab')">
+        <span class="nav-icon">🔬</span>
+        <span>Laboratoire 3D</span>
+      </a>
+      <a class="nav-item" data-page="programming" onclick="showPage('programming')">
+        <span class="nav-icon"></span>
+        <span>Programmation</span>
+      </a>
+      <a class="nav-item" data-page="robotics" onclick="showPage('robotics')">
+        <span class="nav-icon">🤖</span>
+        <span>Robotique 3D</span>
+      </a>
+      <a class="nav-item" data-page="maintenance" onclick="showPage('maintenance')">
+        <span class="nav-icon">🖥️</span>
+        <span>Maintenance</span>
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-label">Communauté</div>
+      <a class="nav-item" data-page="challenges" onclick="showPage('challenges')">
+        <span class="nav-icon">🏆</span>
+        <span>Challenges</span>
+        <span class="nav-badge">6</span>
+      </a>
+      <a class="nav-item" data-page="projects" onclick="showPage('projects')">
+        <span class="nav-icon">🎨</span>
+        <span>Mes projets</span>
+      </a>
+      <a class="nav-item" data-page="certificates" onclick="showPage('certificates')">
+        <span class="nav-icon">🎓</span>
+        <span>Certificats</span>
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-label">Compte</div>
+      <a class="nav-item" data-page="profile" onclick="showPage('profile')">
+        <span class="nav-icon">👤</span>
+        <span>Profil</span>
+      </a>
+      <a class="nav-item" data-page="settings" onclick="showPage('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span>Paramètres</span>
+      </a>
+    </div>
+    
+    <div class="sidebar-progress">
+      <h4>🎯 Progression globale</h4>
+      <div class="progress-bar"><div class="progress-fill" style="width: 68%"></div></div>
+      <div class="progress-text">
+        <span>Niveau 5</span>
+        <span>68%</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-grid-bg"></div>
+        <div class="hero-content">
+          <div>
+            <div class="hero-badge">
+              <span class="pulse"></span>
+              <span>Plateforme éducative #1 en France</span>
+            </div>
+            <h1>Apprends aujourd'hui <span class="gradient-text">les technologies</span> de demain !</h1>
+            <p>Électronique, robotique, programmation, maintenance informatique et électronique... tout en un seul endroit, avec des simulations interactives et des projets concrets.</p>
+            <div class="hero-buttons">
+              <button class="btn btn-primary btn-lg" onclick="showPage('dashboard')">🚀 Commencer à apprendre</button>
+              <button class="btn btn-secondary btn-lg" onclick="showPage('lab')">🔬 Découvrir la plateforme</button>
+            </div>
+            <div class="age-selector">
+              <div class="age-card" onclick="selectAge(8, this)">
+                <div class="age-emoji">🧒</div>
+                <div class="age-range">8 - 13 ans</div>
+                <div class="age-label">Découvrir et créer</div>
+              </div>
+              <div class="age-card selected" onclick="selectAge(14, this)">
+                <div class="age-emoji">👨‍💻</div>
+                <div class="age-range">14 - 20 ans</div>
+                <div class="age-label">Approfondir et innover</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <svg class="robot-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="robotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#7c4dff;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#0a1628;stop-opacity:1" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <circle cx="200" cy="200" r="180" fill="rgba(0,212,255,0.08)" />
+              <circle cx="200" cy="200" r="140" fill="rgba(124,77,255,0.06)" />
+              
+              <rect x="130" y="80" width="140" height="110" rx="20" fill="url(#robotGrad)" stroke="#00a8cc" stroke-width="2"/>
+              <rect x="140" y="90" width="120" height="80" rx="12" fill="url(#screenGrad)"/>
+              
+              <circle cx="170" cy="130" r="15" fill="#00d4ff" filter="url(#glow)">
+                <animate attributeName="r" values="15;17;15" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="230" cy="130" r="15" fill="#00d4ff" filter="url(#glow)">
+                <animate attributeName="r" values="15;17;15" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="170" cy="130" r="6" fill="#0a1628"/>
+              <circle cx="230" cy="130" r="6" fill="#0a1628"/>
+              
+              <path d="M 170 150 Q 200 165 230 150" stroke="#00d4ff" stroke-width="3" fill="none" stroke-linecap="round"/>
+              
+              <line x1="200" y1="80" x2="200" y2="50" stroke="#00d4ff" stroke-width="3"/>
+              <circle cx="200" cy="45" r="8" fill="#ff6b35" filter="url(#glow)">
+                <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              
+              <rect x="150" y="200" width="100" height="90" rx="15" fill="url(#robotGrad)" stroke="#00a8cc" stroke-width="2"/>
+              <rect x="165" y="215" width="70" height="50" rx="8" fill="url(#screenGrad)"/>
+              <text x="200" y="240" font-family="monospace" font-size="14" fill="#00d4ff" text-anchor="middle" font-weight="bold">&lt;/&gt;</text>
+              <rect x="175" y="248" width="50" height="8" rx="4" fill="#00e676" opacity="0.8"/>
+              
+              <rect x="110" y="210" width="30" height="60" rx="15" fill="url(#robotGrad)" stroke="#00a8cc" stroke-width="2"/>
+              <rect x="260" y="210" width="30" height="60" rx="15" fill="url(#robotGrad)" stroke="#00a8cc" stroke-width="2"/>
+              
+              <circle cx="125" cy="280" r="12" fill="#ff6b35"/>
+              <circle cx="275" cy="280" r="12" fill="#ff6b35"/>
+              
+              <g opacity="0.9">
+                <rect x="50" y="120" width="70" height="50" rx="6" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="1"/>
+                <rect x="60" y="130" width="40" height="4" rx="2" fill="#00d4ff"/>
+                <rect x="60" y="140" width="50" height="4" rx="2" fill="#00d4ff" opacity="0.6"/>
+                <rect x="60" y="150" width="30" height="4" rx="2" fill="#00d4ff" opacity="0.4"/>
+              </g>
+              
+              <g opacity="0.9">
+                <rect x="280" y="100" width="80" height="60" rx="6" fill="rgba(255,107,53,0.2)" stroke="#ff6b35" stroke-width="1"/>
+                <circle cx="300" cy="120" r="8" fill="#ff6b35"/>
+                <rect x="315" y="115" width="30" height="4" rx="2" fill="#ff6b35"/>
+                <rect x="315" y="125" width="25" height="4" rx="2" fill="#ff6b35" opacity="0.6"/>
+              </g>
+              
+              <circle cx="80" cy="80" r="3" fill="#00d4ff">
+                <animate attributeName="cy" values="80;70;80" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="320" cy="300" r="3" fill="#ff6b35">
+                <animate attributeName="cy" values="300;290;300" dur="3s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="350" cy="150" r="2" fill="#00e676">
+                <animate attributeName="cy" values="150;140;150" dur="2.5s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon"></div>
+            <div class="stat-trend">+12%</div>
+          </div>
+          <div class="stat-value">48</div>
+          <div class="stat-label">Cours disponibles</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-header">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-trend">+8%</div>
+          </div>
+          <div class="stat-value">24</div>
+          <div class="stat-label">Challenges actifs</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-header">
+            <div class="stat-icon">👥</div>
+            <div class="stat-trend">+24%</div>
+          </div>
+          <div class="stat-value">12.5K</div>
+          <div class="stat-label">Apprenants actifs</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-header">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-trend">+15%</div>
+          </div>
+          <div class="stat-value">3.2K</div>
+          <div class="stat-label">Certificats délivrés</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Nos domaines de formation</h2>
+          <p class="section-subtitle">Rejoins notre communauté. Apprends, partage, progresse !</p>
+        </div>
+        <a class="section-link" onclick="showPage('courses')">Voir tout →</a>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="showPage('electronics')">
+          <div class="card-image electronics">
+            <span class="card-tag">Populaire</span>
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Électronique</h3>
+            <p class="card-desc">Composants, circuits, lois fondamentales et simulations interactives.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📖 12 leçons</span>
+              <span class="card-meta-item">⏱️ 6h</span>
+              <span class="card-meta-item">⭐ 4.9</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showPage('programming')">
+          <div class="card-image programming">
+            <span class="card-tag">Nouveau</span>
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Programmation</h3>
+            <p class="card-desc">Blocs, Python, C, Java. Du débutant à l'expert avec éditeur intégré.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📖 18 leçons</span>
+              <span class="card-meta-item">️ 10h</span>
+              <span class="card-meta-item">⭐ 4.8</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showPage('robotics')">
+          <div class="card-image robotics">🤖
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Robotique 3D</h3>
+            <p class="card-desc">Construis et programme des robots en environnement 3D immersif.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📖 10 leçons</span>
+              <span class="card-meta-item">⏱️ 8h</span>
+              <span class="card-meta-item">⭐ 4.9</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showPage('maintenance')">
+          <div class="card-image maintenance">️
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Maintenance informatique</h3>
+            <p class="card-desc">Assemblage, diagnostic et réparation d'ordinateurs en 3D.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📖 14 leçons</span>
+              <span class="card-meta-item">⏱️ 7h</span>
+              <span class="card-meta-item">⭐ 4.7</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showPage('lab')">
+          <div class="card-image lab">🔬
+            <span class="card-tag">Interactif</span>
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Laboratoire de circuits 3D</h3>
+            <p class="card-desc">Atelier interactif pour créer et simuler des circuits électriques.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📖 8 projets</span>
+              <span class="card-meta-item">⏱️ ∞</span>
+              <span class="card-meta-item">⭐ 5.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="showPage('challenges')">
+          <div class="card-image" style="background: linear-gradient(135deg, #ff174422, #ff6b3522);">
+            <span class="card-tag">Compétition</span>
+            <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Challenges & Défis</h3>
+            <p class="card-desc">Relève des défis quotidiens, gagne des XP et débloque des badges.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">🏆 24 défis</span>
+              <span class="card-meta-item">⏱️ Variable</span>
+              <span class="card-meta-item">⭐ 4.9</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-dashboard">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Tableau de bord</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Bonjour Lucas ! 👋</h2>
+          <p class="section-subtitle">Tu es sur la bonne voie pour devenir un grand technicien !</p>
+        </div>
+        <button class="btn btn-cyan" onclick="showPage('courses')">📚 Continuer l'apprentissage</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-trend">+120</div>
+          </div>
+          <div class="stat-value">1 240</div>
+          <div class="stat-label">Points XP</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-header">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-trend">7 jours</div>
+          </div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Série en cours</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-header">
+            <div class="stat-icon">🎖️</div>
+            <div class="stat-trend">+2</div>
+          </div>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Badges obtenus</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-header">
+            <div class="stat-icon">📊</div>
+            <div class="stat-trend">+5%</div>
+          </div>
+          <div class="stat-value">68%</div>
+          <div class="stat-label">Progression globale</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">📈 Activité d'apprentissage</h3>
+            <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-top: 0.2rem;">Ton évolution sur les 7 derniers jours</p>
+          </div>
+          <div class="chart-tabs">
+            <button class="chart-tab active">Semaine</button>
+            <button class="chart-tab">Mois</button>
+            <button class="chart-tab">Année</button>
+          </div>
+        </div>
+        <svg class="chart-svg" viewBox="0 0 800 220" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="40" y1="40" x2="760" y2="40" stroke="var(--border)" stroke-width="1"/>
+          <line x1="40" y1="90" x2="760" y2="90" stroke="var(--border)" stroke-width="1"/>
+          <line x1="40" y1="140" x2="760" y2="140" stroke="var(--border)" stroke-width="1"/>
+          <line x1="40" y1="190" x2="760" y2="190" stroke="var(--border)" stroke-width="1"/>
+          
+          <path d="M 40 160 L 140 130 L 240 140 L 340 90 L 440 100 L 540 60 L 640 70 L 760 40 L 760 190 L 40 190 Z" fill="url(#chartGrad)"/>
+          <path d="M 40 160 L 140 130 L 240 140 L 340 90 L 440 100 L 540 60 L 640 70 L 760 40" fill="none" stroke="#00d4ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          
+          <circle cx="40" cy="160" r="5" fill="#00d4ff"/>
+          <circle cx="140" cy="130" r="5" fill="#00d4ff"/>
+          <circle cx="240" cy="140" r="5" fill="#00d4ff"/>
+          <circle cx="340" cy="90" r="5" fill="#00d4ff"/>
+          <circle cx="440" cy="100" r="5" fill="#00d4ff"/>
+          <circle cx="540" cy="60" r="5" fill="#00d4ff"/>
+          <circle cx="640" cy="70" r="5" fill="#00d4ff"/>
+          <circle cx="760" cy="40" r="6" fill="#ff6b35" stroke="white" stroke-width="2"/>
+          
+          <text x="40" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Lun</text>
+          <text x="140" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Mar</text>
+          <text x="240" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Mer</text>
+          <text x="340" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Jeu</text>
+          <text x="440" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Ven</text>
+          <text x="540" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Sam</text>
+          <text x="640" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Dim</text>
+          <text x="760" y="210" font-size="11" fill="var(--text-tertiary)" text-anchor="middle">Auj</text>
+        </svg>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">📚 Mes cours en cours</h3>
+            <a class="section-link" onclick="showPage('courses')">Voir tout →</a>
+          </div>
+          <div class="course-list">
+            <div class="course-item" onclick="showPage('electronics')">
+              <div class="course-thumb">⚡</div>
+              <div class="course-info">
+                <h4>Les composants électroniques</h4>
+                <p>Électronique • 12 leçons</p>
+              </div>
+              <div class="course-progress">
+                <div class="mini-progress"><div class="mini-progress-fill" style="width: 70%"></div></div>
+                <div class="mini-progress-text"><span>70%</span><span>8/12</span></div>
+              </div>
+            </div>
+            <div class="course-item" onclick="showPage('lab')">
+              <div class="course-thumb">🔬</div>
+              <div class="course-info">
+                <h4>Créer un circuit simple</h4>
+                <p>Laboratoire de circuits</p>
+              </div>
+              <div class="course-progress">
+                <div class="mini-progress"><div class="mini-progress-fill" style="width: 45%"></div></div>
+                <div class="mini-progress-text"><span>45%</span><span>3/7</span></div>
+              </div>
+            </div>
+            <div class="course-item" onclick="showPage('programming')">
+              <div class="course-thumb">💻</div>
+              <div class="course-info">
+                <h4>Programmer une LED</h4>
+                <p>Programmation par blocs</p>
+              </div>
+              <div class="course-progress">
+                <div class="mini-progress"><div class="mini-progress-fill" style="width: 30%"></div></div>
+                <div class="mini-progress-text"><span>30%</span><span>2/6</span></div>
+              </div>
+            </div>
+            <div class="course-item" onclick="showPage('robotics')">
+              <div class="course-thumb"></div>
+              <div class="course-info">
+                <h4>Robot éviteur d'obstacles</h4>
+                <p>Robotique 3D</p>
+              </div>
+              <div class="course-progress">
+                <div class="mini-progress"><div class="mini-progress-fill" style="width: 15%"></div></div>
+                <div class="mini-progress-text"><span>15%</span><span>1/8</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel" style="margin-bottom: 1.5rem;">
+            <div class="panel-header">
+              <h3 class="panel-title">🎖️ Mes badges</h3>
+            </div>
+            <div class="badges-grid">
+              <div class="badge-item earned">
+                <div class="badge-icon">🔰</div>
+                <div class="badge-name">Débutant</div>
+              </div>
+              <div class="badge-item earned">
+                <div class="badge-icon">🔍</div>
+                <div class="badge-name">Curieux</div>
+              </div>
+              <div class="badge-item earned">
+                <div class="badge-icon"></div>
+                <div class="badge-name">Créatif</div>
+              </div>
+              <div class="badge-item earned">
+                <div class="badge-icon">⚡</div>
+                <div class="badge-name">Éclair</div>
+              </div>
+              <div class="badge-item locked">
+                <div class="badge-icon">🔒</div>
+                <div class="badge-name">Expert</div>
+              </div>
+              <div class="badge-item locked">
+                <div class="badge-icon"></div>
+                <div class="badge-name">Maître</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3 class="panel-title">📊 Activité récente</h3>
+            </div>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-content">
+                  <strong>Leçon complétée</strong>
+                  <p>Les bases de l'électricité</p>
+                  <div class="activity-time">Il y a 2h • +50 XP</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background: var(--success);"></div>
+                <div class="activity-content">
+                  <strong>Badge obtenu</strong>
+                  <p>Badge "Curieux" débloqué</p>
+                  <div class="activity-time">Hier • +100 XP</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background: var(--accent);"></div>
+                <div class="activity-content">
+                  <strong>Défi terminé</strong>
+                  <p>LED clignotante réussie</p>
+                  <div class="activity-time">Il y a 3 jours • +75 XP</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background: var(--purple);"></div>
+                <div class="activity-content">
+                  <strong>Niveau atteint</strong>
+                  <p>Niveau 5 - Apprenti Technicien</p>
+                  <div class="activity-time">Il y a 5 jours</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-courses">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Mes formations</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">📚 Mes formations</h2>
+          <p class="section-subtitle">Continue là où tu t'es arrêté ou découvre de nouveaux cours</p>
+        </div>
+      </div>
+
+      <div class="challenge-filters">
+        <button class="filter-btn active" onclick="filterCourses('all', this)">Tous</button>
+        <button class="filter-btn" onclick="filterCourses('in-progress', this)">En cours</button>
+        <button class="filter-btn" onclick="filterCourses('completed', this)">Terminés</button>
+        <button class="filter-btn" onclick="filterCourses('favorites', this)">Favoris</button>
+      </div>
+
+      <div class="cards-grid" id="coursesGrid"></div>
+    </div>
+
+    <div class="page" id="page-electronics">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Électronique</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"> Module Électronique</h2>
+          <p class="section-subtitle">Apprends les composants, leurs fonctions et leurs applications.</p>
+        </div>
+      </div>
+
+      <div class="ohm-simulator">
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem;"> Simulateur interactif : Loi d'Ohm</h3>
+        <p style="color: var(--text-tertiary); font-size: 0.9rem; margin-bottom: 1.5rem;">Ajuste les valeurs pour voir l'effet sur le circuit en temps réel</p>
+        
+        <div class="ohm-grid">
+          <div class="ohm-visual">
+            <svg class="ohm-circuit" viewBox="0 0 300 200">
+              <rect x="20" y="80" width="40" height="40" rx="4" fill="#ff6b35"/>
+              <text x="40" y="105" text-anchor="middle" fill="white" font-size="14" font-weight="bold">9V</text>
+              
+              <line x1="60" y1="100" x2="120" y2="100" stroke="#00d4ff" stroke-width="3"/>
+              <line x1="180" y1="100" x2="240" y2="100" stroke="#00d4ff" stroke-width="3"/>
+              <line x1="240" y1="100" x2="240" y2="160" stroke="#00d4ff" stroke-width="3"/>
+              <line x1="240" y1="160" x2="60" y2="160" stroke="#00d4ff" stroke-width="3"/>
+              <line x1="60" y1="160" x2="60" y2="120" stroke="#00d4ff" stroke-width="3"/>
+              <line x1="60" y1="120" x2="60" y2="100" stroke="#00d4ff" stroke-width="3"/>
+              
+              <rect x="120" y="90" width="60" height="20" rx="3" fill="#8b4513"/>
+              <text x="150" y="104" text-anchor="middle" fill="white" font-size="10" font-weight="bold" id="resistorLabel">220Ω</text>
+              
+              <circle cx="240" cy="130" r="15" fill="#ff1744" id="ledGlow" opacity="0.8">
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="240" cy="130" r="8" fill="#ff5252"/>
+              
+              <circle r="3" fill="#00d4ff">
+                <animateMotion dur="2s" repeatCount="indefinite" path="M 60 100 L 120 100 L 180 100 L 240 100 L 240 160 L 60 160 L 60 100"/>
+              </circle>
+            </svg>
+          </div>
+          
+          <div class="ohm-controls">
+            <div class="slider-group">
+              <label>Tension (U) <span id="voltageValue">9 V</span></label>
+              <input type="range" min="1" max="12" value="9" step="0.5" id="voltageSlider" oninput="updateOhm()">
+            </div>
+            <div class="slider-group">
+              <label>Résistance (R) <span id="resistanceValue">220 Ω</span></label>
+              <input type="range" min="10" max="1000" value="220" step="10" id="resistanceSlider" oninput="updateOhm()">
+            </div>
+            <div class="slider-group">
+              <label>Courant (I) <span id="currentValue">40.9 mA</span></label>
+              <input type="range" min="1" max="100" value="41" id="currentSlider" disabled style="opacity: 0.5;">
+            </div>
+            
+            <div class="ohm-result">
+              <div class="formula">U = R × I</div>
+              <div class="value" id="ohmResult">40.9 mA</div>
+              <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.3rem;" id="ohmFormula">9V = 220Ω × 0.0409A</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h3 class="section-title" style="font-size: 1.4rem;">📖 Leçons disponibles</h3>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="openLesson('tension')">
+          <div class="card-image electronics">⚡
+            <span class="card-tag">Débutant</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Tension, courant, résistance</h3>
+            <p class="card-desc">Les notions fondamentales de l'électricité expliquées simplement.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%"></div></div>
+              <div class="mini-progress-text"><span>Terminé</span><span>✓</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="openLesson('ohm')">
+          <div class="card-image electronics">📐
+            <span class="card-tag">Débutant</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Loi d'Ohm</h3>
+            <p class="card-desc">U = R × I - La relation essentielle en électronique.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%"></div></div>
+              <div class="mini-progress-text"><span>Terminé</span><span>✓</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="openLesson('components')">
+          <div class="card-image electronics">🔋
+            <span class="card-tag">Débutant</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Composants passifs</h3>
+            <p class="card-desc">Résistances, condensateurs, bobines et leurs usages.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 70%"></div></div>
+              <div class="mini-progress-text"><span>En cours</span><span>70%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="openLesson('semiconductors')">
+          <div class="card-image electronics">💡
+            <span class="card-tag">Intermédiaire</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Diodes et transistors</h3>
+            <p class="card-desc">Les semi-conducteurs expliqués simplement.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 30%"></div></div>
+              <div class="mini-progress-text"><span>En cours</span><span>30%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="openLesson('circuits')">
+          <div class="card-image electronics">🔗
+            <span class="card-tag">Intermédiaire</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Circuits série et parallèle</h3>
+            <p class="card-desc">Comprendre les différentes topologies de circuits.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 0%"></div></div>
+              <div class="mini-progress-text"><span>À commencer</span><span>0%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" onclick="openLesson('sensors')">
+          <div class="card-image electronics">
+            <span class="card-tag">Avancé</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Capteurs et actionneurs</h3>
+            <p class="card-desc">Interagir avec le monde réel via l'électronique.</p>
+            <div class="card-progress">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 0%"></div></div>
+              <div class="mini-progress-text"><span>Verrouillé</span><span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header mt-1">
+        <div>
+          <h3 class="section-title" style="font-size: 1.4rem;">🧮 Calculateur de code couleur</h3>
+          <p class="section-subtitle">Détermine la valeur d'une résistance à 4 bandes</p>
+        </div>
+      </div>
+
+      <div class="resistor-calc">
+        <div class="resistor-visual">
+          <svg class="resistor-svg" viewBox="0 0 400 120">
+            <line x1="0" y1="60" x2="60" y2="60" stroke="#888" stroke-width="4"/>
+            <line x1="340" y1="60" x2="400" y2="60" stroke="#888" stroke-width="4"/>
+            
+            <rect x="60" y="30" width="280" height="60" rx="30" fill="#d4a574" stroke="#8b6f47" stroke-width="2"/>
+            
+            <rect id="band1" x="110" y="30" width="20" height="60" fill="#ff0000"/>
+            <rect id="band2" x="150" y="30" width="20" height="60" fill="#000000"/>
+            <rect id="band3" x="190" y="30" width="20" height="60" fill="#ff6600"/>
+            <rect id="band4" x="270" y="30" width="20" height="60" fill="#ffd700"/>
+          </svg>
+        </div>
+        
+        <div class="color-bands">
+          <div class="color-band-select">
+            <label>1ère bande</label>
+            <select id="band1Select" onchange="updateResistor()">
+              <option value="0" data-color="#000000">Noir (0)</option>
+              <option value="1" data-color="#8b4513">Marron (1)</option>
+              <option value="2" data-color="#ff0000" selected>Rouge (2)</option>
+              <option value="3" data-color="#ff6600">Orange (3)</option>
+              <option value="4" data-color="#ffd700">Jaune (4)</option>
+              <option value="5" data-color="#00aa00">Vert (5)</option>
+              <option value="6" data-color="#0000ff">Bleu (6)</option>
+              <option value="7" data-color="#8b00ff">Violet (7)</option>
+              <option value="8" data-color="#888888">Gris (8)</option>
+              <option value="9" data-color="#ffffff">Blanc (9)</option>
+            </select>
+          </div>
+          <div class="color-band-select">
+            <label>2ème bande</label>
+            <select id="band2Select" onchange="updateResistor()">
+              <option value="0" data-color="#000000" selected>Noir (0)</option>
+              <option value="1" data-color="#8b4513">Marron (1)</option>
+              <option value="2" data-color="#ff0000">Rouge (2)</option>
+              <option value="3" data-color="#ff6600">Orange (3)</option>
+              <option value="4" data-color="#ffd700">Jaune (4)</option>
+              <option value="5" data-color="#00aa00">Vert (5)</option>
+              <option value="6" data-color="#0000ff">Bleu (6)</option>
+              <option value="7" data-color="#8b00ff">Violet (7)</option>
+              <option value="8" data-color="#888888">Gris (8)</option>
+              <option value="9" data-color="#ffffff">Blanc (9)</option>
+            </select>
+          </div>
+          <div class="color-band-select">
+            <label>Multiplicateur</label>
+            <select id="band3Select" onchange="updateResistor()">
+              <option value="1" data-color="#000000">×1 (Noir)</option>
+              <option value="10" data-color="#8b4513">×10 (Marron)</option>
+              <option value="100" data-color="#ff0000">×100 (Rouge)</option>
+              <option value="1000" data-color="#ff6600" selected>×1k (Orange)</option>
+              <option value="10000" data-color="#ffd700">×10k (Jaune)</option>
+              <option value="100000" data-color="#00aa00">×100k (Vert)</option>
+              <option value="1000000" data-color="#0000ff">×1M (Bleu)</option>
+            </select>
+          </div>
+          <div class="color-band-select">
+            <label>Tolérance</label>
+            <select id="band4Select" onchange="updateResistor()">
+              <option value="1" data-color="#8b4513">±1% (Marron)</option>
+              <option value="2" data-color="#ff0000">±2% (Rouge)</option>
+              <option value="5" data-color="#ffd700" selected>±5% (Or)</option>
+              <option value="10" data-color="#c0c0c0">±10% (Argent)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="resistor-result">
+          <div class="value" id="resistorResult">20 kΩ</div>
+          <div class="tolerance" id="resistorTolerance">Tolérance : ±5% (19kΩ - 21kΩ)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-lab">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <a onclick="showPage('electronics')">Électronique</a>
+        <span>›</span>
+        <span class="current">Laboratoire 3D</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"> Laboratoire de circuits 3D</h2>
+          <p class="section-subtitle">Construis et simule tes circuits électroniques en temps réel</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-ghost btn-sm">💾 Sauvegarder</button>
+          <button class="btn btn-ghost btn-sm">📤 Partager</button>
+          <button class="btn btn-cyan btn-sm" onclick="runSimulation()">▶ Simuler</button>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <div class="workspace-panel">
+          <h4>🧩 Composants</h4>
+          
+          <div class="component-category">
+            <h5>Alimentation</h5>
+            <div class="component-item" onclick="addComponent('battery')">
+              <div class="comp-icon">🔋</div>
+              <span>Pile 9V</span>
+            </div>
+            <div class="component-item" onclick="addComponent('arduino')">
+              <div class="comp-icon">🟦</div>
+              <span>Arduino Uno</span>
+            </div>
+            <div class="component-item" onclick="addComponent('usb')">
+              <div class="comp-icon"></div>
+              <span>USB Power</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Passifs</h5>
+            <div class="component-item" onclick="addComponent('resistor')">
+              <div class="comp-icon">📏</div>
+              <span>Résistance</span>
+            </div>
+            <div class="component-item" onclick="addComponent('capacitor')">
+              <div class="comp-icon">⚪</div>
+              <span>Condensateur</span>
+            </div>
+            <div class="component-item" onclick="addComponent('inductor')">
+              <div class="comp-icon">🌀</div>
+              <span>Bobine</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Semi-conducteurs</h5>
+            <div class="component-item" onclick="addComponent('led')">
+              <div class="comp-icon">💡</div>
+              <span>LED</span>
+            </div>
+            <div class="component-item" onclick="addComponent('diode')">
+              <div class="comp-icon">➡️</div>
+              <span>Diode</span>
+            </div>
+            <div class="component-item" onclick="addComponent('transistor')">
+              <div class="comp-icon">🔺</div>
+              <span>Transistor NPN</span>
+            </div>
+            <div class="component-item" onclick="addComponent('mosfet')">
+              <div class="comp-icon">⚡</div>
+              <span>MOSFET</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Contrôle</h5>
+            <div class="component-item" onclick="addComponent('button')">
+              <div class="comp-icon">🔘</div>
+              <span>Bouton poussoir</span>
+            </div>
+            <div class="component-item" onclick="addComponent('switch')">
+              <div class="comp-icon"></div>
+              <span>Interrupteur</span>
+            </div>
+            <div class="component-item" onclick="addComponent('potentiometer')">
+              <div class="comp-icon">🎚️</div>
+              <span>Potentiomètre</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Sortie</h5>
+            <div class="component-item" onclick="addComponent('buzzer')">
+              <div class="comp-icon">🔊</div>
+              <span>Buzzer</span>
+            </div>
+            <div class="component-item" onclick="addComponent('motor')">
+              <div class="comp-icon">⚙️</div>
+              <span>Moteur DC</span>
+            </div>
+            <div class="component-item" onclick="addComponent('servo')">
+              <div class="comp-icon">🎯</div>
+              <span>Servomoteur</span>
+            </div>
+            <div class="component-item" onclick="addComponent('relay')">
+              <div class="comp-icon">🔁</div>
+              <span>Relais</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Capteurs</h5>
+            <div class="component-item" onclick="addComponent('ldr')">
+              <div class="comp-icon">☀️</div>
+              <span>Photorésistance</span>
+            </div>
+            <div class="component-item" onclick="addComponent('thermistor')">
+              <div class="comp-icon">🌡️</div>
+              <span>Thermistance</span>
+            </div>
+            <div class="component-item" onclick="addComponent('ultrasonic')">
+              <div class="comp-icon">📡</div>
+              <span>Ultrason HC-SR04</span>
+            </div>
+            <div class="component-item" onclick="addComponent('dht11')">
+              <div class="comp-icon">💧</div>
+              <span>DHT11 (Temp/Hum)</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Mesure</h5>
+            <div class="component-item" onclick="addComponent('multimeter')">
+              <div class="comp-icon">📊</div>
+              <span>Multimètre</span>
+            </div>
+            <div class="component-item" onclick="addComponent('oscilloscope')">
+              <div class="comp-icon">📈</div>
+              <span>Oscilloscope</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Intégrés</h5>
+            <div class="component-item" onclick="addComponent('ne555')">
+              <div class="comp-icon">️</div>
+              <span>NE555 Timer</span>
+            </div>
+            <div class="component-item" onclick="addComponent('opamp')">
+              <div class="comp-icon">🔼</div>
+              <span>Ampli-op LM741</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="labCanvas"></canvas>
+          <div class="simulation-status">Simulation active</div>
+          <div class="canvas-toolbar">
+            <button class="tool-btn active" title="Sélectionner">🖱️</button>
+            <button class="tool-btn" title="Déplacer">✋</button>
+            <button class="tool-btn" title="Connecter"></button>
+            <button class="tool-btn" title="Rotation">🔄</button>
+            <button class="tool-btn" title="Supprimer">🗑️</button>
+            <button class="tool-btn" title="Zoom +">➕</button>
+            <button class="tool-btn" title="Zoom -">➖</button>
+            <button class="tool-btn" title="Vue 3D">🎥</button>
+          </div>
+        </div>
+
+        <div class="workspace-panel">
+          <h4> Propriétés</h4>
+          <div class="form-group">
+            <label>Composant sélectionné</label>
+            <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); font-size: 0.88rem;">LED Rouge</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Valeur</label>
+            <input type="text" class="form-control" value="220 Ω" id="componentValue">
+          </div>
+          
+          <div class="form-group">
+            <label>Tension mesurée</label>
+            <div style="padding: 0.75rem; background: rgba(0, 230, 118, 0.1); border-radius: var(--radius-sm); font-size: 1.3rem; font-weight: 700; color: var(--success); font-family: var(--font-mono);">5.00 V</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Courant</label>
+            <div style="padding: 0.75rem; background: rgba(0, 212, 255, 0.1); border-radius: var(--radius-sm); font-size: 1.3rem; font-weight: 700; color: var(--primary); font-family: var(--font-mono);">22.7 mA</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Puissance dissipée</label>
+            <div style="padding: 0.75rem; background: rgba(255, 107, 53, 0.1); border-radius: var(--radius-sm); font-size: 1.1rem; font-weight: 700; color: var(--accent); font-family: var(--font-mono);">113.5 mW</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Résultats de simulation</label>
+            <div style="padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                <span>LED allumée</span>
+                <span style="color: var(--success); font-weight: 700;">✓</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                <span>Tension</span>
+                <span style="font-weight: 600;">5.00 V</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Courant</span>
+                <span style="font-weight: 600;">12 mA</span>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn btn-cyan" style="width: 100%;" onclick="runSimulation()">▶ Lancer la simulation</button>
+          <button class="btn btn-ghost" style="width: 100%; margin-top: 0.5rem;" onclick="resetCircuit()">🔄 Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-programming">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Programmation</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">💻 Programmation</h2>
+          <p class="section-subtitle">Écris, exécute et débogue ton code avec notre éditeur intégré</p>
+        </div>
+      </div>
+
+      <div class="exercise-info">
+        <h4>🎯 Exercice : Allumer une LED</h4>
+        <p>Écris un programme qui fait clignoter une LED connectée à la broche 13. Utilise une boucle pour répéter l'action 5 fois.</p>
+      </div>
+
+      <div class="editor-layout">
+        <div class="editor-panel">
+          <div class="editor-header">
+            <h3>📝 Éditeur de code</h3>
+            <div class="lang-tabs">
+              <button class="lang-tab active" onclick="switchCodeLang('python', this)">Python</button>
+              <button class="lang-tab" onclick="switchCodeLang('c', this)">C</button>
+              <button class="lang-tab" onclick="switchCodeLang('blocks', this)">Blocs</button>
+              <button class="lang-tab" onclick="switchCodeLang('java', this)">Java</button>
+            </div>
+          </div>
+          <textarea class="code-area" id="codeEditor" spellcheck="false"># Allumer une LED
+import time
+from gpiozero import LED
+
+led = LED(13)
+
+for i in range(5):
+    led.on()
+    time.sleep(1)
+    led.off()
+    time.sleep(1)
+
+print("Programme terminé !")</textarea>
+          <div class="editor-toolbar">
+            <button class="btn btn-cyan btn-sm" onclick="runCode()">▶ Exécuter</button>
+            <button class="btn btn-ghost btn-sm" onclick="resetCode()"> Reset</button>
+            <button class="btn btn-ghost btn-sm" onclick="checkCode()">✓ Vérifier</button>
+            <button class="btn btn-ghost btn-sm" onclick="showHint()"> Indice</button>
+            <button class="btn btn-ghost btn-sm" onclick="showSolutions()">📋 Solutions</button>
+          </div>
+        </div>
+
+        <div class="editor-panel">
+          <div class="editor-header">
+            <h3>📤 Sortie / Résultats</h3>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--success);" id="statusLed"></div>
+              <span style="font-size: 0.82rem;">Prêt</span>
+            </div>
+          </div>
+          <div class="output-panel" id="outputPanel">Clique sur "Exécuter" pour voir le résultat...
+
+Objectifs de l'exercice :
+✓ Comprendre la syntaxe Python
+✓ Utiliser une boucle for
+✓ Contrôler une sortie
+✓ Gérer le temps avec sleep()</div>
+        </div>
+      </div>
+
+      <div class="section-header mt-1">
+        <div>
+          <h3 class="section-title" style="font-size: 1.4rem;">🧩 Éditeur de blocs visuel</h3>
+          <p class="section-subtitle">Programme en glissant-déposant des blocs colorés</p>
+        </div>
+      </div>
+
+      <div class="blocks-editor">
+        <div class="blocks-palette">
+          <h4>🎨 Blocs disponibles</h4>
+          
+          <div class="block-category">
+            <div class="block-category-title">Événements</div>
+            <div class="block-item event" onclick="addBlock('event', ' Quand programme démarre')">🚀 Quand programme démarre</div>
+            <div class="block-item event" onclick="addBlock('event', ' Quand bouton pressé')">🔘 Quand bouton pressé</div>
+            <div class="block-item event" onclick="addBlock('event', '📡 Quand distance < 10cm')"> Quand distance < 10cm</div>
+          </div>
+          
+          <div class="block-category">
+            <div class="block-category-title">Contrôle</div>
+            <div class="block-item control" onclick="addBlock('control', '🔁 Répéter 10 fois')"> Répéter 10 fois</div>
+            <div class="block-item control" onclick="addBlock('control', '♾️ Répéter indéfiniment')">♾️ Répéter indéfiniment</div>
+            <div class="block-item control" onclick="addBlock('control', '❓ Si... alors...')">❓ Si... alors...</div>
+            <div class="block-item control" onclick="addBlock('control', '⏱️ Attendre 1 sec')">⏱️ Attendre 1 sec</div>
+            <div class="block-item control" onclick="addBlock('control', '🔁 Pour i de 0 à 5')">🔁 Pour i de 0 à 5</div>
+          </div>
+          
+          <div class="block-category">
+            <div class="block-category-title">Actions</div>
+            <div class="block-item action" onclick="addBlock('action', '💡 Allumer LED broche 13')">💡 Allumer LED broche 13</div>
+            <div class="block-item action" onclick="addBlock('action', '⚫ Éteindre LED broche 13')">⚫ Éteindre LED broche 13</div>
+            <div class="block-item action" onclick="addBlock('action', '🔄 Inverser LED')">🔄 Inverser LED</div>
+            <div class="block-item action" onclick="addBlock('action', '🔊 Jouer son 1000Hz')">🔊 Jouer son 1000Hz</div>
+            <div class="block-item action" onclick="addBlock('action', '⚙️ Moteur avant vitesse 100')">⚙️ Moteur avant vitesse 100</div>
+            <div class="block-item action" onclick="addBlock('action', '🎯 Servo angle 90°')">🎯 Servo angle 90°</div>
+          </div>
+          
+          <div class="block-category">
+            <div class="block-category-title">Capteurs</div>
+            <div class="block-item sensor" onclick="addBlock('sensor', '📏 Lire distance ultrason')">📏 Lire distance ultrason</div>
+            <div class="block-item sensor" onclick="addBlock('sensor', '️ Lire température')">🌡️ Lire température</div>
+            <div class="block-item sensor" onclick="addBlock('sensor', '️ Lire luminosité')">☀️ Lire luminosité</div>
+            <div class="block-item sensor" onclick="addBlock('sensor', '💧 Lire humidité')">💧 Lire humidité</div>
+          </div>
+          
+          <div class="block-category">
+            <div class="block-category-title">Variables</div>
+            <div class="block-item variable" onclick="addBlock('variable', ' Créer variable compteur')"> Créer variable compteur</div>
+            <div class="block-item variable" onclick="addBlock('variable', '➕ Ajouter 1 à compteur')"> Ajouter 1 à compteur</div>
+            <div class="block-item variable" onclick="addBlock('variable', '📊 Afficher compteur')">📊 Afficher compteur</div>
+          </div>
+        </div>
+        
+        <div class="blocks-canvas">
+          <h4 style="margin-bottom: 1rem; color: var(--text-tertiary);"> Ton programme</h4>
+          <div class="block-chain" id="blockChain">
+            <div class="block-item event">🚀 Quand programme démarre</div>
+            <div class="block-item control">🔁 Répéter 5 fois</div>
+            <div class="block-item action">💡 Allumer LED broche 13</div>
+            <div class="block-item control">⏱️ Attendre 1 seconde</div>
+            <div class="block-item action"> Éteindre LED broche 13</div>
+            <div class="block-item control">️ Attendre 1 seconde</div>
+          </div>
+          <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+            <button class="btn btn-cyan btn-sm" onclick="runBlocks()">▶ Exécuter les blocs</button>
+            <button class="btn btn-ghost btn-sm" onclick="clearBlocks()">🗑️ Effacer</button>
+            <button class="btn btn-ghost btn-sm" onclick="convertBlocksToCode()"> Convertir en code</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-robotics">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Robotique 3D</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🤖 Robotique 3D</h2>
+          <p class="section-subtitle">Construis et programme ton robot virtuel</p>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <div class="workspace-panel">
+          <h4>🧩 Pièces disponibles</h4>
+          
+          <div class="component-category">
+            <h5>Châssis</h5>
+            <div class="component-item" onclick="addRobotPart('chassis')">
+              <div class="comp-icon"></div>
+              <span>Châssis principal</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('wheel')">
+              <div class="comp-icon">⚙️</div>
+              <span>Roue motrice</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('caster')">
+              <div class="comp-icon">🔵</div>
+              <span>Roue folle</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Moteurs</h5>
+            <div class="component-item" onclick="addRobotPart('motor')">
+              <div class="comp-icon">️</div>
+              <span>Moteur DC</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('servo')">
+              <div class="comp-icon">🎚️</div>
+              <span>Servomoteur</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('stepper')">
+              <div class="comp-icon">🔄</div>
+              <span>Moteur pas à pas</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Capteurs</h5>
+            <div class="component-item" onclick="addRobotPart('ultrasonic')">
+              <div class="comp-icon"></div>
+              <span>Ultrasonique HC-SR04</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('infrared')">
+              <div class="comp-icon">🔴</div>
+              <span>Infrarouge</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('line')">
+              <div class="comp-icon">⚫</div>
+              <span>Capteur de ligne</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('gyro')">
+              <div class="comp-icon"></div>
+              <span>Gyroscope</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('camera')">
+              <div class="comp-icon">📷</div>
+              <span>Caméra</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Contrôle</h5>
+            <div class="component-item" onclick="addRobotPart('board')">
+              <div class="comp-icon">🟩</div>
+              <span>Carte Arduino</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('raspberry')">
+              <div class="comp-icon">🍓</div>
+              <span>Raspberry Pi</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('battery')">
+              <div class="comp-icon">🔋</div>
+              <span>Batterie LiPo</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('driver')">
+              <div class="comp-icon">🔌</div>
+              <span>Pont en H L298N</span>
+            </div>
+          </div>
+          
+          <div class="component-category">
+            <h5>Accessoires</h5>
+            <div class="component-item" onclick="addRobotPart('led')">
+              <div class="comp-icon">💡</div>
+              <span>LED</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('buzzer')">
+              <div class="comp-icon">🔊</div>
+              <span>Buzzer</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('arm')">
+              <div class="comp-icon">🦾</div>
+              <span>Bras robotique</span>
+            </div>
+            <div class="component-item" onclick="addRobotPart('gripper')">
+              <div class="comp-icon">✊</div>
+              <span>Pince</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="robotCanvas"></canvas>
+          <div class="canvas-toolbar">
+            <button class="tool-btn active">🖱️</button>
+            <button class="tool-btn">🔄</button>
+            <button class="tool-btn"></button>
+            <button class="tool-btn" onclick="testRobot()">▶️</button>
+          </div>
+        </div>
+
+        <div class="workspace-panel">
+          <div style="background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: white; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+            <h4 style="margin-bottom: 0.5rem; color: white;">🎯 Mission actuelle</h4>
+            <p style="font-size: 0.85rem; opacity: 0.95;">Construire un robot qui évite les obstacles en utilisant un capteur ultrasonique.</p>
+          </div>
+          
+          <h4>✅ Objectifs</h4>
+          <div style="font-size: 0.88rem;">
+            <div style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--success);">✓</span>
+              <span>Châssis avec 4 roues</span>
+            </div>
+            <div style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--success);">✓</span>
+              <span>2 moteurs DC installés</span>
+            </div>
+            <div style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--success);">✓</span>
+              <span>Capteur ultrasonique</span>
+            </div>
+            <div style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="color: var(--warning);">○</span>
+              <span>Programme de contrôle</span>
+            </div>
+          </div>
+          
+          <h4 style="margin-top: 1.5rem;">⚙️ Actions</h4>
+          <button class="btn btn-cyan" style="width: 100%; margin-bottom: 0.5rem;" onclick="testRobot()">▶ Tester le robot</button>
+          <button class="btn btn-ghost" style="width: 100%; margin-bottom: 0.5rem;" onclick="saveRobot()">💾 Sauvegarder</button>
+          <button class="btn btn-ghost" style="width: 100%;" onclick="showPage('programming')">💻 Programmer</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-maintenance">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Maintenance informatique</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🖥️ Maintenance informatique</h2>
+          <p class="section-subtitle">Assemblage et diagnostic d'un ordinateur en 3D</p>
+        </div>
+      </div>
+
+      <div class="workspace" style="grid-template-columns: 1fr 1fr;">
+        <div class="canvas-container">
+          <canvas id="pcCanvas"></canvas>
+          <div class="canvas-toolbar">
+            <button class="tool-btn active">🖱️</button>
+            <button class="tool-btn">🔄</button>
+            <button class="tool-btn">🎥</button>
+            <button class="tool-btn">➕</button>
+          </div>
+        </div>
+
+        <div class="workspace-panel">
+          <h4>🧩 Composants à installer</h4>
+          
+          <div class="component-item" style="border-left: 3px solid var(--success);">
+            <div class="comp-icon" style="background: rgba(0, 230, 118, 0.15);">🟩</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Carte mère</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">ATX • Socket LGA 1700</div>
+            </div>
+            <span style="color: var(--success); font-weight: 700; font-size: 0.82rem;">✓ Installé</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--success);">
+            <div class="comp-icon" style="background: rgba(0, 230, 118, 0.15);">⬛</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Processeur (CPU)</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">Intel Core i7-13700K</div>
+            </div>
+            <span style="color: var(--success); font-weight: 700; font-size: 0.82rem;">✓ Installé</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--success);">
+            <div class="comp-icon" style="background: rgba(0, 230, 118, 0.15);"></div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Mémoire RAM</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">16 GB DDR4 3200 MHz</div>
+            </div>
+            <span style="color: var(--success); font-weight: 700; font-size: 0.82rem;">✓ Installé</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--warning); cursor: pointer;" onclick="installComponent(this)">
+            <div class="comp-icon" style="background: rgba(255, 107, 53, 0.15);">🟨</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Carte graphique (GPU)</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">NVIDIA RTX 4060</div>
+            </div>
+            <span style="color: var(--warning); font-weight: 700; font-size: 0.82rem;">○ À installer</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--warning); cursor: pointer;" onclick="installComponent(this)">
+            <div class="comp-icon" style="background: rgba(255, 107, 53, 0.15);">⚫</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Stockage SSD</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">1 TB NVMe M.2</div>
+            </div>
+            <span style="color: var(--warning); font-weight: 700; font-size: 0.82rem;">○ À installer</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--warning); cursor: pointer;" onclick="installComponent(this)">
+            <div class="comp-icon" style="background: rgba(255, 107, 53, 0.15);">🔌</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Alimentation (PSU)</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">650W 80+ Gold</div>
+            </div>
+            <span style="color: var(--warning); font-weight: 700; font-size: 0.82rem;">○ À installer</span>
+          </div>
+          
+          <div class="component-item" style="border-left: 3px solid var(--warning); cursor: pointer;" onclick="installComponent(this)">
+            <div class="comp-icon" style="background: rgba(255, 107, 53, 0.15);">️</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600;">Refroidissement</div>
+              <div style="font-size: 0.78rem; color: var(--text-tertiary);">Ventirad CPU</div>
+            </div>
+            <span style="color: var(--warning); font-weight: 700; font-size: 0.82rem;">○ À installer</span>
+          </div>
+          
+          <button class="btn btn-cyan" style="width: 100%; margin-top: 1rem;" onclick="checkAssembly()">✓ Vérifier l'assemblage</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-challenges">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Challenges</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🏆 Challenges & Défis</h2>
+          <p class="section-subtitle">Relève des défis, gagne des points et débloque des badges !</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header"><div class="stat-icon">🏆</div></div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Défis complétés</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-header"><div class="stat-icon">🔥</div></div>
+          <div class="stat-value">7</div>
+          <div class="stat-label">Série en cours</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-header"><div class="stat-icon">⭐</div></div>
+          <div class="stat-value">850</div>
+          <div class="stat-label">XP des défis</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-header"><div class="stat-icon"></div></div>
+          <div class="stat-value">Top 15%</div>
+          <div class="stat-label">Classement</div>
+        </div>
+      </div>
+
+      <div class="challenge-filters">
+        <button class="filter-btn active" onclick="filterChallenges('all', this)">Tous</button>
+        <button class="filter-btn" onclick="filterChallenges('daily', this)">📅 Quotidiens</button>
+        <button class="filter-btn" onclick="filterChallenges('weekly', this)"> Hebdomadaires</button>
+        <button class="filter-btn" onclick="filterChallenges('project', this)">🚀 Projets</button>
+        <button class="filter-btn" onclick="filterChallenges('completed', this)">✓ Terminés</button>
+      </div>
+
+      <div class="cards-grid" id="challengesGrid"></div>
+    </div>
+
+    <div class="page" id="page-projects">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Mes projets</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🎨 Mes projets</h2>
+          <p class="section-subtitle">Tes créations et sauvegardes</p>
+        </div>
+        <button class="btn btn-cyan">+ Nouveau projet</button>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-image electronics">🔬
+            <span class="card-tag">Circuit</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Circuit LED avec résistance</h3>
+            <p class="card-desc">Montage simple avec Arduino, résistance 220Ω et LED rouge.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📅 Modifié hier</span>
+              <span class="card-meta-item">💾 Auto-sauvé</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-image robotics">
+            <span class="card-tag">Robot</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Robot éviteur d'obstacles</h3>
+            <p class="card-desc">Robot 4 roues avec capteur ultrasonique HC-SR04.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📅 Il y a 3 jours</span>
+              <span class="card-meta-item">💾 Sauvegardé</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-image programming">💻
+            <span class="card-tag">Code</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Programme LED clignotante</h3>
+            <p class="card-desc">Code Python avec boucle for et contrôle GPIO.</p>
+            <div class="card-meta">
+              <span class="card-meta-item"> Il y a 5 jours</span>
+              <span class="card-meta-item">✓ Validé</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-image maintenance">️
+            <span class="card-tag">PC</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">Assemblage PC Gaming</h3>
+            <p class="card-desc">Configuration complète avec RTX 4060 et i7-13700K.</p>
+            <div class="card-meta">
+              <span class="card-meta-item">📅 Il y a 1 semaine</span>
+              <span class="card-meta-item">💾 Sauvegardé</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-certificates">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Certificats</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🎓 Mes certificats</h2>
+          <p class="section-subtitle">Tes réussites officielles TECHNOVA LAB</p>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" style="border: 2px solid var(--success);">
+          <div class="card-body text-center" style="padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎓</div>
+            <h3 class="card-title" style="font-size: 1.3rem;">Électronique Fondamentale</h3>
+            <p class="card-desc">Certificat de complétion du module Électronique - Niveau Débutant</p>
+            <div style="margin: 1rem 0; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem;">
+              ID: TNV-2026-ELEC-001240
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-tertiary);">Obtenu le 15 octobre 2026</div>
+            <button class="btn btn-cyan btn-sm mt-1"> Télécharger PDF</button>
+          </div>
+        </div>
+
+        <div class="card" style="border: 2px solid var(--primary);">
+          <div class="card-body text-center" style="padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏅</div>
+            <h3 class="card-title" style="font-size: 1.3rem;">Programmeur Junior</h3>
+            <p class="card-desc">Maîtrise des bases de Python et de la programmation par blocs</p>
+            <div style="margin: 1rem 0; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem;">
+              ID: TNV-2026-PROG-000856
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-tertiary);">Obtenu le 8 octobre 2026</div>
+            <button class="btn btn-cyan btn-sm mt-1">📥 Télécharger PDF</button>
+          </div>
+        </div>
+
+        <div class="card" style="opacity: 0.6;">
+          <div class="card-body text-center" style="padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+            <h3 class="card-title" style="font-size: 1.3rem;">Roboticien Confirmé</h3>
+            <p class="card-desc">Complète le module Robotique 3D pour débloquer ce certificat</p>
+            <div style="margin-top: 1rem;">
+              <div class="mini-progress"><div class="mini-progress-fill" style="width: 15%"></div></div>
+              <div class="mini-progress-text"><span>15% complété</span><span>🔒</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-profile">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Profil</span>
+      </div>
+
+      <div class="profile-header">
+        <div class="profile-avatar-lg">LD</div>
+        <div class="profile-info">
+          <h2>Lucas Dupont</h2>
+          <p>lucas.dupont@email.com • 14 ans • Niveau 5 • Apprenti Technicien</p>
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-value">1 240</div>
+              <div class="stat-label">XP Total</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Cours</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Badges</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">5</div>
+              <div class="stat-label">Projets</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">2</div>
+              <div class="stat-label">Certificats</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-section">
+          <h3>👤 Informations personnelles</h3>
+          <div class="form-group">
+            <label>Nom complet</label>
+            <input type="text" class="form-control" value="Lucas Dupont">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" value="lucas.dupont@email.com">
+          </div>
+          <div class="form-group">
+            <label>Âge</label>
+            <input type="number" class="form-control" value="14" min="8" max="20">
+          </div>
+          <div class="form-group">
+            <label>Bio</label>
+            <textarea class="form-control" rows="3" style="resize: vertical;">Passionné d'électronique et de robotique. J'adore construire des circuits et programmer des robots !</textarea>
+          </div>
+          <button class="btn btn-cyan" onclick="saveProfile()">💾 Enregistrer</button>
+        </div>
+
+        <div class="profile-section">
+          <h3>⚙️ Préférences</h3>
+          
+          <div class="form-group">
+            <label>Langue</label>
+            <select class="form-control" id="profileLang" onchange="changeLanguage(this.value)">
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇧 English</option>
+              <option value="es">🇪🇸 Español</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Tranche d'âge</label>
+            <select class="form-control">
+              <option>8 - 13 ans</option>
+              <option selected>14 - 20 ans</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Niveau de difficulté</label>
+            <select class="form-control">
+              <option>Débutant</option>
+              <option selected>Intermédiaire</option>
+              <option>Avancé</option>
+            </select>
+          </div>
+          
+          <div style="margin-top: 1rem;">
+            <div class="toggle-row">
+              <span>🔔 Notifications</span>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <span>🔊 Sons</span>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <span>🌙 Mode sombre</span>
+              <div class="toggle-switch" id="darkModeToggle" onclick="toggleTheme()"></div>
+            </div>
+            <div class="toggle-row">
+              <span>📧 Newsletter</span>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <span>👥 Profil public</span>
+              <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-settings">
+      <div class="breadcrumb">
+        <a onclick="showPage('home')">Accueil</a>
+        <span>›</span>
+        <span class="current">Paramètres</span>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">️ Paramètres</h2>
+          <p class="section-subtitle">Personnalise ton expérience TECHNOVA LAB</p>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-section">
+          <h3>🎨 Apparence</h3>
+          <div class="toggle-row">
+            <span>🌙 Mode sombre</span>
+            <div class="toggle-switch" id="settingsDarkToggle" onclick="toggleTheme()"></div>
+          </div>
+          <div class="toggle-row">
+            <span>✨ Animations</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>🌌 Particules d'arrière-plan</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this); toggleParticles()"></div>
+          </div>
+          <div class="form-group mt-1">
+            <label>Taille de police</label>
+            <select class="form-control">
+              <option>Petite</option>
+              <option selected>Normale</option>
+              <option>Grande</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>🔒 Confidentialité</h3>
+          <div class="toggle-row">
+            <span>👥 Profil visible publiquement</span>
+            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>📊 Statistiques publiques</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span> Classement visible</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <button class="btn btn-ghost btn-sm mt-1">📥 Exporter mes données</button>
+          <button class="btn btn-ghost btn-sm" style="margin-top: 0.5rem; color: var(--danger);">🗑️ Supprimer mon compte</button>
+        </div>
+
+        <div class="profile-section">
+          <h3>🔔 Notifications</h3>
+          <div class="toggle-row">
+            <span> Email - Nouveaux cours</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>📧 Email - Défis hebdomadaires</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>📱 Push - Messages</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <span>🔔 Push - Badges obtenus</span>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h3>ℹ️ À propos</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+            <strong>TECHNOVA LAB</strong> v1.0<br>
+            Plateforme éducative interactive pour apprendre l'électronique, la robotique et la programmation.
+          </p>
+          <div style="font-size: 0.85rem; color: var(--text-tertiary);">
+            <div style="padding: 0.4rem 0; display: flex; justify-content: space-between;">
+              <span>Version</span>
+              <strong>1.0.0</strong>
+            </div>
+            <div style="padding: 0.4rem 0; display: flex; justify-content: space-between;">
+              <span>Dernière MAJ</span>
+              <strong>21 octobre 2026</strong>
+            </div>
+            <div style="padding: 0.4rem 0; display: flex; justify-content: space-between;">
+              <span>Build</span>
+              <strong>2026.10.21</strong>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm mt-1" style="width: 100%;">📄 Conditions d'utilisation</button>
+          <button class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 0.5rem;">🔒 Politique de confidentialité</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-col">
+          <div class="logo" style="margin-bottom: 1rem;">
+            <div class="logo-icon">T</div>
+            <div style="color: white;">TECHNOVA<span style="color: var(--primary);">LAB</span></div>
+          </div>
+          <p>Plateforme éducative interactive pour apprendre l'électronique, la robotique et la programmation de manière pratique et ludique.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Modules</h4>
+          <a onclick="showPage('electronics')">Électronique</a>
+          <a onclick="showPage('programming')">Programmation</a>
+          <a onclick="showPage('robotics')">Robotique 3D</a>
+          <a onclick="showPage('lab')">Laboratoire</a>
+          <a onclick="showPage('maintenance')">Maintenance</a>
+        </div>
+        <div class="footer-col">
+          <h4>Ressources</h4>
+          <a>Documentation</a>
+          <a>Tutoriels</a>
+          <a>Communauté</a>
+          <a>FAQ</a>
+          <a>Blog</a>
+        </div>
+        <div class="footer-col">
+          <h4>Légal</h4>
+          <a>Conditions d'utilisation</a>
+          <a>Politique de confidentialité</a>
+          <a>Cookies</a>
+          <a>Contact</a>
+          <a>Mentions légales</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 TECHNOVA LAB. Tous droits réservés. • Fait avec ❤️ pour les apprenants
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+const particlesCanvas = document.getElementById('particles-canvas');
+const pCtx = particlesCanvas.getContext('2d');
+let particles = [];
+let particlesEnabled = true;
+
+function resizeParticles() {
+  particlesCanvas.width = window.innerWidth;
+  particlesCanvas.height = window.innerHeight;
+}
+
+function initParticles() {
+  particles = [];
+  const count = Math.min(60, Math.floor(window.innerWidth / 25));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * particlesCanvas.width,
+      y: Math.random() * particlesCanvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 2 + 1,
+      opacity: Math.random() * 0.5 + 0.2
+    });
+  }
+}
+
+function animateParticles() {
+  if (!particlesEnabled) {
+    requestAnimationFrame(animateParticles);
+    return;
+  }
+  pCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+  
+  particles.forEach((p, i) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    
+    if (p.x < 0 || p.x > particlesCanvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > particlesCanvas.height) p.vy *= -1;
+    
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    pCtx.fillStyle = `rgba(0, 212, 255, ${p.opacity})`;
+    pCtx.fill();
+    
+    for (let j = i + 1; j < particles.length; j++) {
+      const p2 = particles[j];
+      const dx = p.x - p2.x;
+      const dy = p.y - p2.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        pCtx.beginPath();
+        pCtx.moveTo(p.x, p.y);
+        pCtx.lineTo(p2.x, p2.y);
+        pCtx.strokeStyle = `rgba(0, 212, 255, ${0.15 * (1 - dist / 120)})`;
+        pCtx.lineWidth = 0.5;
+        pCtx.stroke();
+      }
+    }
+  });
+  
+  requestAnimationFrame(animateParticles);
+}
+
+function toggleParticles() {
+  particlesEnabled = !particlesEnabled;
+  if (!particlesEnabled) {
+    pCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+  }
+}
+
+resizeParticles();
+initParticles();
+animateParticles();
+window.addEventListener('resize', () => { resizeParticles(); initParticles(); });
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.classList.add('active');
+  
+  document.querySelectorAll('.nav-item').forEach(a => a.classList.remove('active'));
+  const activeLink = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (activeLink) activeLink.classList.add('active');
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('sidebar').classList.remove('open');
+  
+  setTimeout(() => {
+    if (pageId === 'lab') initLab3D();
+    if (pageId === 'robotics') initRobot3D();
+    if (pageId === 'maintenance') initPC3D();
+    if (pageId === 'courses') renderCourses();
+    if (pageId === 'challenges') renderChallenges();
+  }, 100);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+  
+  const darkToggles = [document.getElementById('darkModeToggle'), document.getElementById('settingsDarkToggle')];
+  darkToggles.forEach(t => {
+    if (t) {
+      if (!isDark) t.classList.add('active');
+      else t.classList.remove('active');
+    }
+  });
+  
+  localStorage.setItem('technova_theme', isDark ? 'light' : 'dark');
+  showToast('info', '🎨', 'Thème modifié', isDark ? 'Mode clair activé' : 'Mode sombre activé');
+}
+
+const languages = [
+  { code: 'fr', flag: '🇫🇷', name: 'Français' },
+  { code: 'en', flag: '🇬🇧', name: 'English' },
+  { code: 'es', flag: '🇪🇸', name: 'Español' }
+];
+let currentLangIndex = 0;
+
+function cycleLanguage() {
+  currentLangIndex = (currentLangIndex + 1) % languages.length;
+  const lang = languages[currentLangIndex];
+  document.getElementById('currentLangFlag').textContent = lang.flag;
+  document.getElementById('currentLangCode').textContent = lang.code.toUpperCase();
+  document.getElementById('profileLang').value = lang.code;
+  showToast('info', lang.flag, 'Langue changée', lang.name);
+}
+
+function changeLanguage(lang) {
+  const idx = languages.findIndex(l => l.code === lang);
+  if (idx >= 0) {
+    currentLangIndex = idx;
+    document.getElementById('currentLangFlag').textContent = languages[idx].flag;
+    document.getElementById('currentLangCode').textContent = languages[idx].code.toUpperCase();
+  }
+}
+
+function showToast(type, icon, title, text) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-content">
+      <h4>${title}</h4>
+      <p>${text || ''}</p>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
+}
+
+function openModal(content) {
+  document.getElementById('modalContent').innerHTML = content;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+function selectAge(age, el) {
+  document.querySelectorAll('.age-card').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  showToast('success', '✓', 'Parcours sélectionné', `${age}-${age+5} ans`);
+}
+
+function toggleFav(btn) {
+  btn.classList.toggle('active');
+  if (btn.classList.contains('active')) {
+    btn.textContent = '♥';
+    showToast('success', '♥', 'Ajouté aux favoris');
+  } else {
+    btn.textContent = '♡';
+    showToast('info', '♡', 'Retiré des favoris');
+  }
+}
+
+function updateOhm() {
+  const voltage = parseFloat(document.getElementById('voltageSlider').value);
+  const resistance = parseFloat(document.getElementById('resistanceSlider').value);
+  const current = (voltage / resistance) * 1000;
+  
+  document.getElementById('voltageValue').textContent = voltage + ' V';
+  document.getElementById('resistanceValue').textContent = resistance + ' Ω';
+  document.getElementById('currentValue').textContent = current.toFixed(1) + ' mA';
+  document.getElementById('resistorLabel').textContent = resistance + 'Ω';
+  document.getElementById('ohmResult').textContent = current.toFixed(1) + ' mA';
+  document.getElementById('ohmFormula').textContent = `${voltage}V = ${resistance}Ω × ${(voltage/resistance).toFixed(4)}A`;
+  
+  const ledGlow = document.getElementById('ledGlow');
+  if (ledGlow) {
+    const brightness = Math.min(1, current / 30);
+    ledGlow.setAttribute('opacity', 0.3 + brightness * 0.7);
+  }
+}
+
+function updateResistor() {
+  const b1 = parseInt(document.getElementById('band1Select').value);
+  const b2 = parseInt(document.getElementById('band2Select').value);
+  const mult = parseInt(document.getElementById('band3Select').value);
+  const tol = parseInt(document.getElementById('band4Select').value);
+  
+  const selects = ['band1Select', 'band2Select', 'band3Select', 'band4Select'];
+  const bands = ['band1', 'band2', 'band3', 'band4'];
+  selects.forEach((selId, i) => {
+    const sel = document.getElementById(selId);
+    const color = sel.options[sel.selectedIndex].dataset.color;
+    document.getElementById(bands[i]).setAttribute('fill', color);
+  });
+  
+  const value = (b1 * 10 + b2) * mult;
+  let displayValue;
+  if (value >= 1000000) displayValue = (value / 1000000) + ' MΩ';
+  else if (value >= 1000) displayValue = (value / 1000) + ' kΩ';
+  else displayValue = value + ' Ω';
+  
+  const minVal = value * (1 - tol/100);
+  const maxVal = value * (1 + tol/100);
+  let minDisplay, maxDisplay;
+  if (minVal >= 1000) minDisplay = (minVal/1000).toFixed(1) + 'k';
+  else minDisplay = minVal.toFixed(0);
+  if (maxVal >= 1000) maxDisplay = (maxVal/1000).toFixed(1) + 'k';
+  else maxDisplay = maxVal.toFixed(0);
+  
+  document.getElementById('resistorResult').textContent = displayValue;
+  document.getElementById('resistorTolerance').textContent = `Tolérance : ±${tol}% (${minDisplay}Ω - ${maxDisplay}Ω)`;
+}
+
+function runCode() {
+  const code = document.getElementById('codeEditor').value;
+  const output = document.getElementById('outputPanel');
+  const statusLed = document.getElementById('statusLed');
+  
+  output.innerHTML = '';
+  statusLed.style.background = 'var(--warning)';
+  
+  setTimeout(() => {
+    let outputText = '';
+    
+    if (code.includes('print')) {
+      const matches = code.match(/print\(["']([^"']+)["']\)/g);
+      if (matches) {
+        matches.forEach(m => {
+          outputText += m.match(/print\(["']([^"']+)["']\)/)[1] + '\n';
+        });
+      }
+    }
+    
+    if (code.includes('for') && code.includes('range')) {
+      const rangeMatch = code.match(/range\((\d+)\)/);
+      if (rangeMatch) {
+        const count = parseInt(rangeMatch[1]);
+        for (let i = 0; i < count; i++) {
+          outputText += `💡 LED allumée (itération ${i+1}/${count})\n`;
+          outputText += `⚫ LED éteinte\n`;
+        }
+      }
+    }
+    
+    if (code.includes('led.on()')) outputText += '✓ LED activée sur la broche 13\n';
+    if (code.includes('time.sleep')) outputText += '⏱️ Pause de 1 seconde\n';
+    
+    if (!outputText) {
+      outputText = '️ Aucun résultat détecté. Vérifie ton code.\n';
+    }
+    
+    outputText += '\n✅ Programme exécuté avec succès !\n';
+    outputText += '🎯 Objectifs atteints : 4/4\n';
+    outputText += '⭐ +50 XP gagnés !';
+    
+    output.innerHTML = outputText;
+    statusLed.style.background = 'var(--success)';
+    showToast('success', '✓', 'Code exécuté', 'Programme terminé avec succès');
+  }, 500);
+}
+
+function resetCode() {
+  document.getElementById('codeEditor').value = '# Allumer une LED\nimport time\nfrom gpiozero import LED\n\nled = LED(13)\n\nfor i in range(5):\n    led.on()\n    time.sleep(1)\n    led.off()\n    time.sleep(1)\n\nprint("Programme terminé !")';
+  document.getElementById('outputPanel').innerHTML = 'Clique sur "Exécuter" pour voir le résultat...\n\nObjectifs de l\'exercice :\n✓ Comprendre la syntaxe Python\n✓ Utiliser une boucle for\n✓ Contrôler une sortie\n✓ Gérer le temps avec sleep()';
+  document.getElementById('statusLed').style.background = 'var(--success)';
+}
+
+function checkCode() {
+  const code = document.getElementById('codeEditor').value;
+  const checks = [
+    { test: code.includes('for'), msg: '✓ Boucle for présente' },
+    { test: code.includes('led.on()') || code.includes('led.on'), msg: '✓ LED activée' },
+    { test: code.includes('led.off()') || code.includes('led.off'), msg: '✓ LED désactivée' },
+    { test: code.includes('sleep'), msg: '✓ Gestion du temps' }
+  ];
+  
+  let result = ' Vérification du code :\n\n';
+  let passed = 0;
+  checks.forEach(check => {
+    result += check.msg + (check.test ? '' : ' ✗') + '\n';
+    if (check.test) passed++;
+  });
+  result += `\n✅ ${passed}/4 objectifs atteints`;
+  
+  document.getElementById('outputPanel').innerHTML = result;
+  showToast('success', '✓', `${passed}/4 objectifs`, 'Code vérifié');
+}
+
+function showHint() {
+  const hint = '💡 Indice : Utilise une boucle for avec range() pour répéter l\'action. N\'oublie pas d\'importer time pour utiliser sleep(). Exemple : for i in range(5):';
+  document.getElementById('outputPanel').innerHTML = hint;
+}
+
+function showSolutions() {
+  openModal(`
+    <h2 style="margin-bottom: 1rem;">📋 Solutions disponibles</h2>
+    <div style="margin-bottom: 1rem;">
+      <h4 style="margin-bottom: 0.5rem;">Solution 1 : Python avec gpiozero</h4>
+      <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; overflow-x: auto;">from gpiozero import LED
+from time import sleep
+
+led = LED(13)
+
+for i in range(5):
+    led.on()
+    sleep(1)
+    led.off()
+    sleep(1)</pre>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <h4 style="margin-bottom: 0.5rem;">Solution 2 : Python avec RPi.GPIO</h4>
+      <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.85rem; overflow-x: auto;">import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(13, GPIO.OUT)
+
+for i in range(5):
+    GPIO.output(13, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(13, GPIO.LOW)
+    time.sleep(1)
+
+GPIO.cleanup()</pre>
+    </div>
+    <button class="btn btn-cyan" style="width: 100%;" onclick="closeModal()">Fermer</button>
+  `);
+}
+
+function switchCodeLang(lang, btn) {
+  const templates = {
+    python: '# Allumer une LED\nimport time\nfrom gpiozero import LED\n\nled = LED(13)\n\nfor i in range(5):\n    led.on()\n    time.sleep(1)\n    led.off()\n    time.sleep(1)\n\nprint("Programme terminé !")',
+    c: '// Allumer une LED (Arduino)\nvoid setup() {\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}',
+    blocks: '# Mode blocs - Interface visuelle\n# Glisse les blocs pour construire ton programme\n\n[Quand le programme démarre]\n  [Répéter 5 fois]\n    [Allumer LED broche 13]\n    [Attendre 1 seconde]\n    [Éteindre LED broche 13]\n    [Attendre 1 seconde]',
+    java: '// Allumer une LED (Java)\npublic class LEDBlink {\n    public static void main(String[] args) {\n        for (int i = 0; i < 5; i++) {\n            System.out.println("LED ON");\n            try { Thread.sleep(1000); } catch (Exception e) {}\n            System.out.println("LED OFF");\n            try { Thread.sleep(1000); } catch (Exception e) {}\n        }\n    }\n}'
+  };
+  
+  document.getElementById('codeEditor').value = templates[lang];
+  document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function addBlock(type, text) {
+  const chain = document.getElementById('blockChain');
+  const block = document.createElement('div');
+  block.className = `block-item ${type}`;
+  block.textContent = text;
+  chain.appendChild(block);
+  showToast('success', '✓', 'Bloc ajouté', text);
+}
+
+function runBlocks() {
+  showToast('success', '▶', 'Blocs exécutés', 'Programme lancé avec succès !');
+}
+
+function clearBlocks() {
+  document.getElementById('blockChain').innerHTML = '<div style="color: var(--text-tertiary); text-align: center; padding: 2rem;">Glisse des blocs depuis la palette pour commencer</div>';
+}
+
+function convertBlocksToCode() {
+  const blocks = document.querySelectorAll('#blockChain .block-item');
+  let code = '# Code généré depuis les blocs\n';
+  
+  blocks.forEach(block => {
+    const text = block.textContent;
+    if (text.includes('Allumer LED')) code += 'led.on()\n';
+    else if (text.includes('Éteindre LED')) code += 'led.off()\n';
+    else if (text.includes('Attendre')) code += 'time.sleep(1)\n';
+    else if (text.includes('Répéter')) code += 'for i in range(5):\n';
+  });
+  
+  document.getElementById('codeEditor').value = code;
+  showToast('success', '🔄', 'Conversion réussie', 'Les blocs ont été convertis en code Python');
+}
+
+function addComponent(type) {
+  const names = { 
+    battery: 'Pile 9V', resistor: 'Résistance', capacitor: 'Condensateur', 
+    led: 'LED', transistor: 'Transistor', button: 'Bouton', 
+    multimeter: 'Multimètre', arduino: 'Arduino', usb: 'USB Power', 
+    buzzer: 'Buzzer', oscilloscope: 'Oscilloscope', inductor: 'Bobine',
+    diode: 'Diode', mosfet: 'MOSFET', switch: 'Interrupteur',
+    potentiometer: 'Potentiomètre', motor: 'Moteur DC', servo: 'Servomoteur',
+    relay: 'Relais', ldr: 'Photorésistance', thermistor: 'Thermistance',
+    ultrasonic: 'Capteur ultrasonique', dht11: 'DHT11', ne555: 'NE555 Timer',
+    opamp: 'Ampli-op LM741'
+  };
+  showToast('success', '✓', names[type] + ' ajouté', 'Clique sur le plan de travail pour placer');
+}
+
+function runSimulation() {
+  showToast('success', '▶', 'Simulation lancée', 'Circuit fonctionnel - LED allumée');
+}
+
+function resetCircuit() {
+  showToast('info', '🔄', 'Circuit réinitialisé');
+}
+
+function addRobotPart(part) {
+  const names = { 
+    chassis: 'Châssis', wheel: 'Roue', motor: 'Moteur', servo: 'Servo', 
+    ultrasonic: 'Capteur ultrasonique', infrared: 'Capteur infrarouge', 
+    line: 'Capteur de ligne', board: 'Carte Arduino', battery: 'Batterie',
+    caster: 'Roue folle', stepper: 'Moteur pas à pas', gyro: 'Gyroscope',
+    camera: 'Caméra', raspberry: 'Raspberry Pi', driver: 'Pont en H',
+    led: 'LED', buzzer: 'Buzzer', arm: 'Bras robotique', gripper: 'Pince'
+  };
+  showToast('success', '✓', names[part] + ' ajouté', 'Pièce ajoutée au robot');
+}
+
+function testRobot() {
+  showToast('success', '▶', 'Test lancé', 'Le robot évite les obstacles avec succès !');
+}
+
+function saveRobot() {
+  showToast('success', '💾', 'Robot sauvegardé');
+}
+
+function installComponent(el) {
+  if (el.querySelector('span').textContent.includes('À installer')) {
+    el.style.borderLeftColor = 'var(--success)';
+    el.querySelector('span').textContent = '✓ Installé';
+    el.querySelector('span').style.color = 'var(--success)';
+    showToast('success', '✓', 'Composant installé');
+  }
+}
+
+function checkAssembly() {
+  const items = document.querySelectorAll('#page-maintenance .component-item');
+  let installed = 0;
+  items.forEach(item => {
+    if (item.querySelector('span').textContent.includes('Installé')) installed++;
+  });
+  
+  if (installed === items.length) {
+    showToast('success', '✓', 'Assemblage complet !', '+100 XP');
+  } else {
+    showToast('warning', '⚠', `${items.length - installed} composants restants`);
+  }
+}
+
+const coursesData = [
+  { title: 'Les composants électroniques', desc: 'Électronique • 12 leçons', progress: 70, lessons: '8/12', tag: 'En cours', category: 'in-progress', image: 'electronics', icon: '' },
+  { title: 'Créer un circuit simple', desc: 'Laboratoire de circuits', progress: 45, lessons: '3/7', tag: 'En cours', category: 'in-progress', image: 'lab', icon: '' },
+  { title: 'Programmer une LED', desc: 'Programmation par blocs', progress: 30, lessons: '2/6', tag: 'En cours', category: 'in-progress', image: 'programming', icon: '💻' },
+  { title: 'Robot éviteur d\'obstacles', desc: 'Robotique 3D', progress: 15, lessons: '1/8', tag: 'En cours', category: 'in-progress', image: 'robotics', icon: '🤖' },
+  { title: 'Loi d\'Ohm', desc: 'Électronique fondamentale', progress: 100, lessons: '5/5', tag: 'Terminé', category: 'completed', image: 'electronics', icon: '📐' },
+  { title: 'Tension et courant', desc: 'Bases de l\'électricité', progress: 100, lessons: '4/4', tag: 'Terminé', category: 'completed', image: 'electronics', icon: '🔌' },
+  { title: 'Assemblage PC', desc: 'Maintenance informatique', progress: 60, lessons: '6/10', tag: 'En cours', category: 'in-progress', image: 'maintenance', icon: '🖥️' },
+  { title: 'Python pour débutants', desc: 'Programmation', progress: 0, lessons: '0/15', tag: 'À commencer', category: 'all', image: 'programming', icon: '🐍' }
+];
+
+function renderCourses(filter = 'all') {
+  const grid = document.getElementById('coursesGrid');
+  if (!grid) return;
+  
+  const filtered = filter === 'all' ? coursesData : coursesData.filter(c => c.category === filter);
+  
+  grid.innerHTML = filtered.map(c => `
+    <div class="card">
+      <div class="card-image ${c.image}">${c.icon}
+        <span class="card-tag">${c.tag}</span>
+        <button class="card-fav" onclick="event.stopPropagation(); toggleFav(this)">♡</button>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">${c.title}</h3>
+        <p class="card-desc">${c.desc}</p>
+        <div class="card-progress">
+          <div class="mini-progress"><div class="mini-progress-fill" style="width: ${c.progress}%"></div></div>
+          <div class="mini-progress-text"><span>${c.tag}</span><span>${c.lessons}</span></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCourses(filter, btn) {
+  document.querySelectorAll('#page-courses .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses(filter);
+}
+
+const challengesData = [
+  { title: 'Défi du jour', desc: 'Construire un feu tricolore avec 3 LED et des résistances appropriées.', type: 'daily', difficulty: 1, xp: 50, badge: 'Badge Électronicien', time: '15 min', category: 'daily' },
+  { title: 'Défi hebdomadaire', desc: 'Programmer un robot qui évite les obstacles avec un capteur ultrasonique.', type: 'weekly', difficulty: 2, xp: 200, badge: 'Badge Roboticien', time: '2h 15m', category: 'weekly' },
+  { title: 'Projet : Robot suiveur de ligne', desc: 'Construis et programme un robot capable de suivre une ligne noire sur fond blanc.', type: 'project', difficulty: 3, xp: 500, badge: 'Trophée Ingénieur', time: '5h', category: 'project' },
+  { title: 'Diagnostic rapide', desc: 'Identifie la panne dans ce circuit électronique en 5 minutes.', type: 'daily', difficulty: 1, xp: 30, badge: null, time: '5 min', category: 'daily' },
+  { title: 'Station météo connectée', desc: 'Crée une station qui mesure température et humidité et affiche les données.', type: 'weekly', difficulty: 3, xp: 300, badge: 'Badge IoT', time: '3h', category: 'weekly' },
+  { title: 'Alarme sonore', desc: 'Programme une alarme qui se déclenche quand un objet s\'approche.', type: 'project', difficulty: 2, xp: 150, badge: null, time: '1h 30m', category: 'project' }
+];
+
+function renderChallenges(filter = 'all') {
+  const grid = document.getElementById('challengesGrid');
+  if (!grid) return;
+  
+  const filtered = filter === 'all' ? challengesData : challengesData.filter(c => c.category === filter);
+  
+  grid.innerHTML = filtered.map(c => {
+    const stars = Array.from({length: 3}, (_, i) => `<span class="diff-star ${i < c.difficulty ? '' : 'empty'}">★</span>`).join('');
+    return `
+      <div class="challenge-card ${c.type}">
+        <div class="challenge-header">
+          <span class="challenge-type ${c.type}">${c.type === 'daily' ? 'Quotidien' : c.type === 'weekly' ? 'Hebdomadaire' : 'Projet'}</span>
+          <div class="challenge-difficulty">${stars}</div>
+        </div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+        <div class="challenge-rewards">
+          <span class="reward">⭐ +${c.xp} XP</span>
+          ${c.badge ? `<span class="reward">️ ${c.badge}</span>` : ''}
+        </div>
+        <div class="challenge-footer">
+          <span class="challenge-time">⏱️ ${c.time}</span>
+          <button class="btn btn-cyan btn-sm" onclick="startChallenge('${c.title}')">Commencer</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterChallenges(filter, btn) {
+  document.querySelectorAll('#page-challenges .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChallenges(filter);
+}
+
+function startChallenge(title) {
+  showToast('success', '🏆', 'Challenge démarré !', title);
+}
+
+function openLesson(id) {
+  const lessons = {
+    tension: '<h2 style="margin-bottom: 1rem;">⚡ Tension, courant, résistance</h2><p style="margin-bottom: 1rem; line-height: 1.6;">La <strong>tension</strong> (U, en Volts) est la différence de potentiel entre deux points. Le <strong>courant</strong> (I, en Ampères) est le déplacement des électrons. La <strong>résistance</strong> (R, en Ohms) s\'oppose au passage du courant.</p><div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md); margin: 1rem 0;"><strong>Formule :</strong> U = R × I</div><p style="line-height: 1.6;">Analogie : imagine un tuyau d\'eau. La tension c\'est la pression, le courant c\'est le débit, et la résistance c\'est le diamètre du tuyau.</p><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>',
+    ohm: '<h2 style="margin-bottom: 1rem;">📐 La loi d\'Ohm</h2><p style="margin-bottom: 1rem; line-height: 1.6;">La loi d\'Ohm est la relation fondamentale en électronique : <strong>U = R × I</strong></p><div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 230, 118, 0.1)); padding: 1.5rem; border-radius: var(--radius-md); margin: 1rem 0; text-align: center;"><div style="font-size: 2rem; font-weight: 800; color: var(--primary);">U = R × I</div><div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-tertiary);">Tension = Résistance × Courant</div></div><p style="line-height: 1.6;"><strong>Exemple :</strong> Si R = 220 Ω et I = 20 mA (0.02 A), alors U = 220 × 0.02 = 4.4 V</p><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>',
+    components: '<h2 style="margin-bottom: 1rem;">🔋 Les composants passifs</h2><div style="margin: 1rem 0;"><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong>📏 Résistance</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Limite le courant. Valeur en Ohms (Ω).</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong>⚪ Condensateur</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Stocke l\'énergie électrique. Valeur en Farads (F).</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md);"><strong>🌀 Bobine (Inductance)</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">S\'oppose aux variations de courant. Valeur en Henrys (H).</p></div></div><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>',
+    semiconductors: '<h2 style="margin-bottom: 1rem;">💡 Les semi-conducteurs</h2><p style="margin-bottom: 1rem; line-height: 1.6;">Les semi-conducteurs sont des matériaux dont la conductivité peut être contrôlée.</p><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong>💡 Diode / LED</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Laisse passer le courant dans un seul sens. La LED émet de la lumière.</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md);"><strong>🔺 Transistor</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Amplifie ou commute un signal. 3 broches : Base, Collecteur, Émetteur.</p></div><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>',
+    circuits: '<h2 style="margin-bottom: 1rem;"> Topologies de circuits</h2><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong> Série</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Les composants sont connectés les uns à la suite des autres. Le courant est le même partout.</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md);"><strong>⚡ Parallèle</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Les composants sont connectés entre les mêmes deux points. La tension est la même.</p></div><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>',
+    sensors: '<h2 style="margin-bottom: 1rem;">📡 Capteurs et actionneurs</h2><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong>📡 Capteur ultrasonique</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Mesure la distance en émettant des ondes sonores.</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.8rem;"><strong>️ Capteur de température</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Mesure la température ambiante (ex: DHT11).</p></div><div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md);"><strong>⚙️ Moteur (Actionneur)</strong><p style="font-size: 0.9rem; margin-top: 0.3rem;">Convertit l\'énergie électrique en mouvement.</p></div><button class="btn btn-cyan" style="margin-top: 1rem;" onclick="closeModal()">✓ Compris !</button>'
+  };
+  
+  openModal(lessons[id] || '<h2>Information</h2><p>Contenu en cours de développement.</p>');
+}
+
+function saveProfile() {
+  showToast('success', '💾', 'Profil enregistré', 'Tes modifications ont été sauvegardées');
+}
+
+function toggleSwitch(el) {
+  el.classList.toggle('active');
+}
+
+function showNotifications() {
+  openModal(`
+    <h2 style="margin-bottom: 1.5rem;">🔔 Notifications</h2>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+        <strong style="font-size: 0.9rem;">Nouveau défi disponible !</strong>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">Le défi quotidien "Feu tricolore" est maintenant disponible.</p>
+        <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem;">Il y a 2h</div>
+      </div>
+      <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); border-left: 4px solid var(--success);">
+        <strong style="font-size: 0.9rem;">Badge débloqué !</strong>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">Tu as obtenu le badge "Curieux" 🎉</p>
+        <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem;">Hier</div>
+      </div>
+      <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius-md); border-left: 4px solid var(--accent);">
+        <strong style="font-size: 0.9rem;">Nouveau cours disponible</strong>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">"Python avancé" est maintenant dans ton parcours.</p>
+        <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem;">Il y a 3 jours</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" style="width: 100%; margin-top: 1rem;" onclick="closeModal()">Fermer</button>
+  `);
+}
+
+function handleSearch(event) {
+  if (event.key === 'Enter') {
+    const query = event.target.value.trim();
+    if (query) {
+      showToast('info', '🔍', 'Recherche', `Recherche de "${query}"...`);
+    }
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+});
+
+let labScene, labCamera, labRenderer, labAnimationId;
+let robotScene, robotCamera, robotRenderer, robotAnimationId;
+let pcScene, pcCamera, pcRenderer, pcAnimationId;
+
+function initLab3D() {
+  const canvas = document.getElementById('labCanvas');
+  if (!canvas) return;
+  
+  if (labRenderer) {
+    cancelAnimationFrame(labAnimationId);
+    labRenderer.dispose();
+  }
+  
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  
+  labScene = new THREE.Scene();
+  labScene.background = new THREE.Color(0x0f1923);
+  
+  labCamera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 0.1, 1000);
+  labCamera.position.set(0, 5, 10);
+  labCamera.lookAt(0, 0, 0);
+  
+  labRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  labRenderer.setSize(canvas.width, canvas.height);
+  labRenderer.setPixelRatio(window.devicePixelRatio);
+  
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  labScene.add(ambientLight);
+  
+  const directionalLight = new THREE.DirectionalLight(0x00d4ff, 0.8);
+  directionalLight.position.set(5, 10, 5);
+  labScene.add(directionalLight);
+  
+  const gridHelper = new THREE.GridHelper(20, 20, 0x00d4ff, 0x2d4a7a);
+  labScene.add(gridHelper);
+  
+  const breadboardGeo = new THREE.BoxGeometry(6, 0.3, 3);
+  const breadboardMat = new THREE.MeshPhongMaterial({ color: 0xf0f4f8 });
+  const breadboard = new THREE.Mesh(breadboardGeo, breadboardMat);
+  breadboard.position.y = 0.15;
+  labScene.add(breadboard);
+  
+  const arduinoGeo = new THREE.BoxGeometry(2, 0.4, 1.5);
+  const arduinoMat = new THREE.MeshPhongMaterial({ color: 0x00a8cc });
+  const arduino = new THREE.Mesh(arduinoGeo, arduinoMat);
+  arduino.position.set(-2, 0.4, 0);
+  labScene.add(arduino);
+  
+  const ledGeo = new THREE.SphereGeometry(0.2, 16, 16);
+  const ledMat = new THREE.MeshPhongMaterial({ color: 0xff1744, emissive: 0xff1744, emissiveIntensity: 0.5 });
+  const led = new THREE.Mesh(ledGeo, ledMat);
+  led.position.set(1, 0.5, 0);
+  labScene.add(led);
+  
+  const resistorGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.8, 16);
+  const resistorMat = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
+  const resistor = new THREE.Mesh(resistorGeo, resistorMat);
+  resistor.rotation.z = Math.PI / 2;
+  resistor.position.set(0, 0.4, 0);
+  labScene.add(resistor);
+  
+  const wireMat = new THREE.LineBasicMaterial({ color: 0xff0000 });
+  const wirePoints = [new THREE.Vector3(-1, 0.4, 0), new THREE.Vector3(-0.4, 0.4, 0)];
+  const wireGeo = new THREE.BufferGeometry().setFromPoints(wirePoints);
+  const wire = new THREE.Line(wireGeo, wireMat);
+  labScene.add(wire);
+  
+  const multiGeo = new THREE.BoxGeometry(1, 1.5, 0.5);
+  const multiMat = new THREE.MeshPhongMaterial({ color: 0xffd600 });
+  const multimeter = new THREE.Mesh(multiGeo, multiMat);
+  multimeter.position.set(2.5, 0.95, 0);
+  labScene.add(multimeter);
+  
+  let time = 0;
+  function animate() {
+    labAnimationId = requestAnimationFrame(animate);
+    time += 0.02;
+    ledMat.emissiveIntensity = 0.3 + Math.sin(time * 3) * 0.3;
+    labScene.rotation.y = Math.sin(time * 0.2) * 0.1;
+    labRenderer.render(labScene, labCamera);
+  }
+  animate();
+}
+
+function initRobot3D() {
+  const canvas = document.getElementById('robotCanvas');
+  if (!canvas) return;
+  
+  if (robotRenderer) {
+    cancelAnimationFrame(robotAnimationId);
+    robotRenderer.dispose();
+  }
+  
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  
+  robotScene = new THREE.Scene();
+  robotScene.background = new THREE.Color(0x0f1923);
+  
+  robotCamera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 0.1, 1000);
+  robotCamera.position.set(5, 4, 5);
+  robotCamera.lookAt(0, 0, 0);
+  
+  robotRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  robotRenderer.setSize(canvas.width, canvas.height);
+  robotRenderer.setPixelRatio(window.devicePixelRatio);
+  
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  robotScene.add(ambientLight);
+  
+  const dirLight = new THREE.DirectionalLight(0x00d4ff, 0.8);
+  dirLight.position.set(5, 10, 5);
+  robotScene.add(dirLight);
+  
+  const floorGeo = new THREE.PlaneGeometry(20, 20);
+  const floorMat = new THREE.MeshPhongMaterial({ color: 0x2d4a7a });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.5;
+  robotScene.add(floor);
+  
+  const gridHelper = new THREE.GridHelper(20, 20, 0x00d4ff, 0x2d4a7a);
+  robotScene.add(gridHelper);
+  
+  const chassisGeo = new THREE.BoxGeometry(2, 0.3, 1.5);
+  const chassisMat = new THREE.MeshPhongMaterial({ color: 0x00a8cc });
+  const chassis = new THREE.Mesh(chassisGeo, chassisMat);
+  chassis.position.y = 0.15;
+  robotScene.add(chassis);
+  
+  const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
+  const wheelMat = new THREE.MeshPhongMaterial({ color: 0xffd600 });
+  const positions = [[-0.8, 0, 0.8], [-0.8, 0, -0.8], [0.8, 0, 0.8], [0.8, 0, -0.8]];
+  positions.forEach(pos => {
+    const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+    wheel.rotation.x = Math.PI / 2;
+    wheel.position.set(...pos);
+    robotScene.add(wheel);
+  });
+  
+  const sensorGeo = new THREE.BoxGeometry(0.4, 0.3, 0.3);
+  const sensorMat = new THREE.MeshPhongMaterial({ color: 0x00e676 });
+  const sensor = new THREE.Mesh(sensorGeo, sensorMat);
+  sensor.position.set(0, 0.6, 0.7);
+  robotScene.add(sensor);
+  
+  const eyeGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.1, 16);
+  const eyeMat = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x00d4ff, emissiveIntensity: 0.5 });
+  const eye1 = new THREE.Mesh(eyeGeo, eyeMat);
+  eye1.rotation.x = Math.PI / 2;
+  eye1.position.set(-0.1, 0.6, 0.9);
+  robotScene.add(eye1);
+  const eye2 = new THREE.Mesh(eyeGeo, eyeMat);
+  eye2.rotation.x = Math.PI / 2;
+  eye2.position.set(0.1, 0.6, 0.9);
+  robotScene.add(eye2);
+  
+  const boardGeo = new THREE.BoxGeometry(0.8, 0.1, 0.6);
+  const boardMat = new THREE.MeshPhongMaterial({ color: 0x00a8cc });
+  const board = new THREE.Mesh(boardGeo, boardMat);
+  board.position.set(0, 0.35, 0);
+  robotScene.add(board);
+  
+  let time = 0;
+  function animate() {
+    robotAnimationId = requestAnimationFrame(animate);
+    time += 0.02;
+    robotScene.rotation.y = time * 0.3;
+    eyeMat.emissiveIntensity = 0.3 + Math.sin(time * 4) * 0.3;
+    robotRenderer.render(robotScene, robotCamera);
+  }
+  animate();
+}
+
+function initPC3D() {
+  const canvas = document.getElementById('pcCanvas');
+  if (!canvas) return;
+  
+  if (pcRenderer) {
+    cancelAnimationFrame(pcAnimationId);
+    pcRenderer.dispose();
+  }
+  
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  
+  pcScene = new THREE.Scene();
+  pcScene.background = new THREE.Color(0x0f1923);
+  
+  pcCamera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 0.1, 1000);
+  pcCamera.position.set(4, 3, 4);
+  pcCamera.lookAt(0, 0, 0);
+  
+  pcRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  pcRenderer.setSize(canvas.width, canvas.height);
+  pcRenderer.setPixelRatio(window.devicePixelRatio);
+  
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  pcScene.add(ambientLight);
+  
+  const dirLight = new THREE.DirectionalLight(0x00d4ff, 0.8);
+  dirLight.position.set(5, 10, 5);
+  pcScene.add(dirLight);
+  
+  const caseGeo = new THREE.BoxGeometry(2, 3, 1);
+  const caseMat = new THREE.MeshPhongMaterial({ color: 0x2d4a7a, transparent: true, opacity: 0.3 });
+  const pcCase = new THREE.Mesh(caseGeo, caseMat);
+  pcScene.add(pcCase);
+  
+  const edges = new THREE.EdgesGeometry(caseGeo);
+  const lineMat = new THREE.LineBasicMaterial({ color: 0x00d4ff });
+  const caseEdges = new THREE.LineSegments(edges, lineMat);
+  pcScene.add(caseEdges);
+  
+  const mbGeo = new THREE.BoxGeometry(1.8, 2.5, 0.1);
+  const mbMat = new THREE.MeshPhongMaterial({ color: 0x00e676 });
+  const motherboard = new THREE.Mesh(mbGeo, mbMat);
+  motherboard.position.z = -0.4;
+  pcScene.add(motherboard);
+  
+  const cpuGeo = new THREE.BoxGeometry(0.5, 0.5, 0.1);
+  const cpuMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
+  const cpu = new THREE.Mesh(cpuGeo, cpuMat);
+  cpu.position.set(-0.3, 0.5, -0.3);
+  pcScene.add(cpu);
+  
+  const fanGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.15, 16);
+  const fanMat = new THREE.MeshPhongMaterial({ color: 0x00d4ff });
+  const fan = new THREE.Mesh(fanGeo, fanMat);
+  fan.position.set(-0.3, 0.5, -0.15);
+  pcScene.add(fan);
+  
+  const ramGeo = new THREE.BoxGeometry(0.1, 0.8, 0.3);
+  const ramMat = new THREE.MeshPhongMaterial({ color: 0x00a8cc });
+  for (let i = 0; i < 2; i++) {
+    const ram = new THREE.Mesh(ramGeo, ramMat);
+    ram.position.set(0.3 + i * 0.2, 0.3, -0.3);
+    pcScene.add(ram);
+  }
+  
+  const gpuGeo = new THREE.BoxGeometry(1.2, 0.3, 0.4);
+  const gpuMat = new THREE.MeshPhongMaterial({ color: 0xff6b35 });
+  const gpu = new THREE.Mesh(gpuGeo, gpuMat);
+  gpu.position.set(0, -0.5, 0);
+  pcScene.add(gpu);
+  
+  const psuGeo = new THREE.BoxGeometry(1.5, 0.6, 0.8);
+  const psuMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
+  const psu = new THREE.Mesh(psuGeo, psuMat);
+  psu.position.set(0, -1.2, 0);
+  pcScene.add(psu);
+  
+  let time = 0;
+  function animate() {
+    pcAnimationId = requestAnimationFrame(animate);
+    time += 0.02;
+    pcScene.rotation.y = time * 0.2;
+    fan.rotation.y = time * 5;
+    pcRenderer.render(pcScene, pcCamera);
+  }
+  animate();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('technova_theme');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').textContent = '️';
+    const darkToggles = [document.getElementById('darkModeToggle'), document.getElementById('settingsDarkToggle')];
+    darkToggles.forEach(t => { if (t) t.classList.add('active'); });
+  }
+  
+  renderCourses();
+  renderChallenges();
+  
+  setTimeout(() => {
+    showToast('success', '👋', 'Bienvenue Lucas !', 'Tu as 3 nouveaux défis disponibles');
+  }, 1000);
+});
+
+window.addEventListener('resize', () => {
+  const currentPage = document.querySelector('.page.active')?.id;
+  if (currentPage === 'page-lab') initLab3D();
+  if (currentPage === 'page-robotics') initRobot3D();
+  if (currentPage === 'page-maintenance') initPC3D();
+});
+</script>
+
+</body>
+</html>
